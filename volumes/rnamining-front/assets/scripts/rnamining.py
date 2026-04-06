@@ -1,8 +1,9 @@
 from scipy.io import arff
-import numpy as np
-import pandas as pd
 from sys import argv
 from counters import arff_creator
+from pathlib import Path
+import numpy as np
+import pandas as pd
 import argparse
 import os
 import pickle
@@ -107,7 +108,11 @@ def predict(filename_path, organism_name, prediction_type, output_folder):
 
     try:
         X = process_inputfile(filename_path, organism_name, output_folder)
-        model = pickle.load(open('models/' + 'coding_prediction/' + organism_name + '.pkl', 'rb'))
+
+        base_dir = Path(__file__).resolve().parent
+        model_path = base_dir / "models" / "coding_prediction" / f"{organism_name}.pkl"
+        
+        model = pickle.load(open(model_path, 'rb'))
         predict = model.predict(X)
         proba = model.predict_proba(X)
         process_outputfile(filename_path, predict, proba, organism_name, prediction_type,output_folder)
