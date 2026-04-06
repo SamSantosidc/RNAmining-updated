@@ -38,10 +38,11 @@ A solução foi utilizar um caminho absoluto baseado na localização do própri
 Antes:
 ```python
 model = pickle.load(open('models/' + 'coding_prediction/' + organism_name + '.pkl', 'rb'))
-
+```
 Depois:
-
+```python
 from pathlib import Path
+```
 
 base_dir = Path(__file__).resolve().parent
 model_path = base_dir / "models" / "coding_prediction" / f"{organism_name}.pkl"
