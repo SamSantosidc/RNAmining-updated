@@ -4,11 +4,11 @@
 Atualizar as dependências do RNAMining preservando compatibilidade com a execução atual da ferramenta.
 
 ## Dependências atuais do projeto
-1. Python >= 3.8
-2. Pandas >= 0.23.3
-3. Scikit-learn >= 0.21.3
-4. XGBoost >= 1.2.0
-5. Biopython >= 1.78
+1. Python Version >= 3.8
+2. Pandas Version >= 2.0.3
+3. Scikit-learn Version >= 1.3.2
+4. XGBoost Version >= 1.2.0
+5. Biopython Version >= 1.83
 
 ## Estratégia adotada
 As dependências serão analisadas e atualizadas da menos sensível para a mais sensível, sempre comparando os resultados com o baseline gerado antes das alterações.
