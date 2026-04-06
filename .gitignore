@@ -1,2 +1,3 @@
 .env
 rnamining_out/
+*.arff
