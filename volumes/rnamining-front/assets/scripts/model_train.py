@@ -19,7 +19,13 @@ def process_inputfile(filename, organism_name):
     """
     out = organism_name+'.arff'
     output_file = open(out, 'w')
-    arff_creator.Verification(filename)
+
+    # Arquivo de saída da verificação do FASTA
+    verification_output = organism_name + "_verification.txt"
+
+    # Verifica o arquivo de entrada usando a nova assinatura da função
+    arff_creator.Verification(filename, verification_output)
+    
     arff_creator.header(output_file)
     arff_creator.trinucleotides_counts(filename,output_file)
     output_file.close()
