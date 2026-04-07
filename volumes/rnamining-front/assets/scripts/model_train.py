@@ -62,7 +62,7 @@ def balance(dataset_cod, dataset_ncod):
 
     if ncod_instances < cod_instances:
         dataset_cod = dataset_cod.sample(n = ncod_instances)
-    elif cod_instances > ncod_instances:
+    elif ncod_instances > cod_instances:
         dataset_ncod = dataset_ncod.sample(n = cod_instances)
         
         
