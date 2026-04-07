@@ -39,10 +39,10 @@ Antes:
 ```python
 model = pickle.load(open('models/' + 'coding_prediction/' + organism_name + '.pkl', 'rb'))
 ```
+
 Depois:
 ```python
 from pathlib import Path
-
 
 base_dir = Path(__file__).resolve().parent
 model_path = base_dir / "models" / "coding_prediction" / f"{organism_name}.pkl"
@@ -52,7 +52,7 @@ model = pickle.load(open(model_path, 'rb'))
 
 ---
 
-#  2. Fix do XGBoost
+# 2. Fix do XGBoost
 
 ### fix: incompatibilidade entre modelos .pkl e nova versão do XGBoost
 
@@ -68,6 +68,80 @@ Ou seja, o modelo espera objetos da versão antiga, mas o XGBoost atual não rec
 
 Como o objetivo é atualizar a ferramenta, a solução adotada foi retreinar os modelos.
 
-Os novos modelos serão gerados utilizando o XGBoost 2.0.3
+Os novos modelos serão gerados utilizando o XGBoost 2.0.3.
 
-Para isso, serão utilizados os dados, de cada espécie, mais recente do ensemble, gerando novos arquivos `.pkl` que poderão ser carregados corretamente na versão atualizada.
+Para isso, serão utilizados os dados, de cada espécie, mais recentes do Ensembl, gerando novos arquivos `.pkl` que poderão ser carregados corretamente na versão atualizada.
+
+---
+
+# 3. Ajuste de compatibilidade no pipeline de treino
+
+### fix: incompatibilidade entre `model_train.py` e `arff_creator.Verification`
+
+Durante a execução do pipeline de treino automatizado, foi observado o seguinte erro:
+
+`TypeError: Verification() missing 1 required positional argument: 'output_verification'`
+
+Esse erro ocorria na etapa de processamento dos arquivos FASTA, antes da geração dos arquivos `.arff`.
+
+#### Causa raiz
+
+O erro foi causado por uma incompatibilidade entre:
+
+- o módulo `model_train.py`
+- e a implementação atual da função `Verification` no módulo `arff_creator`
+
+A função teve sua assinatura modificada.
+
+Antes:
+```python
+Verification(filename)
+```
+
+Depois:
+```python
+Verification(filename, output_verification)
+```
+
+Na versão atual, além de validar o arquivo FASTA, a função exige um segundo argumento indicando o arquivo onde será salvo o resultado da verificação.
+
+#### Impacto
+
+- O pipeline de treino falhava antes da geração dos arquivos `.arff`
+- Nenhum modelo era treinado
+- A automação do notebook ficava completamente bloqueada
+
+#### Mudanças para consertar
+
+Foi realizada a atualização do `model_train.py` para adequar a chamada da função `Verification` à nova assinatura.
+
+Antes:
+```python
+arff_creator.Verification(filename)
+```
+
+Depois:
+```python
+verification_output = organism_name + "_verification.txt"
+arff_creator.Verification(filename, verification_output)
+```
+
+#### Justificativa da solução
+
+- Mantém compatibilidade com a versão atual do `arff_creator`
+- Preserva o fluxo original do pipeline de treino
+- Introduz apenas um artefato adicional, sem impactar o modelo
+- Evita necessidade de refatoração mais profunda na ferramenta
+
+#### Observações
+
+- O arquivo gerado (`*_verification.txt`) é um artefato intermediário
+- Pode ser utilizado para debug ou validação dos FASTAs
+
+#### Resultado
+
+Após a correção:
+
+- O pipeline de treino voltou a executar corretamente
+- Os arquivos `.arff` passaram a ser gerados sem erro
+- O treinamento dos modelos (`.pkl`) foi restabelecido
