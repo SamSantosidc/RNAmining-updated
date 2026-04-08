@@ -24,7 +24,8 @@ def process_inputfile(filename, organism_name):
     verification_output = organism_name + "_verification.txt"
 
     # Verifica o arquivo de entrada usando a nova assinatura da função
-    arff_creator.Verification(filename, verification_output)
+    with open(verification_output, 'w') as verification_file:
+        arff_creator.Verification(filename, verification_file)
     
     arff_creator.header(output_file)
     arff_creator.trinucleotides_counts(filename,output_file)
