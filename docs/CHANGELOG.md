@@ -145,3 +145,75 @@ Após a correção:
 - O pipeline de treino voltou a executar corretamente
 - Os arquivos `.arff` passaram a ser gerados sem erro
 - O treinamento dos modelos (`.pkl`) foi restabelecido
+
+# 4. Fix no processamento de verificação de FASTA
+
+### fix: uso incorreto de string ao invés de file handle em `Verification`
+
+Durante a execução do pipeline de treino após a adaptação da função `Verification`, foi observado o seguinte erro:
+
+`AttributeError: 'str' object has no attribute 'writelines'`
+
+#### Causa raiz
+
+O erro ocorreu porque o módulo `model_train.py` passou a fornecer apenas o **nome do arquivo (string)** para a função `Verification`, enquanto a nova implementação da função esperava um **objeto de arquivo aberto (file handle)**.
+
+Ou seja:
+
+```python
+verification_output = organism_name + "_verification.txt"
+arff_creator.Verification(filename, verification_output)  # errado
+```
+
+Internamente, a função `Verification` realiza operações como:
+
+```python
+output_verification.writelines(...)
+```
+
+Como strings não possuem esse método, a execução falhava.
+
+#### Impacto
+
+- O pipeline quebrava durante a verificação dos FASTAs
+- Nenhum arquivo `.arff` era gerado
+- O treinamento dos modelos era interrompido
+
+#### Mudanças para consertar
+
+A correção foi abrir explicitamente o arquivo de saída em modo escrita e passar o file handle para a função:
+
+Antes:
+```python
+verification_output = organism_name + "_verification.txt"
+arff_creator.Verification(filename, verification_output)
+```
+
+Depois:
+```python
+verification_output = organism_name + "_verification.txt"
+
+with open(verification_output, 'w') as verification_file:
+    arff_creator.Verification(filename, verification_file)
+```
+
+#### Justificativa da solução
+
+- Mantém compatibilidade com a nova assinatura da função
+- Garante que operações de escrita (`writelines`) funcionem corretamente
+- Segue boas práticas de gerenciamento de arquivos (`with open`)
+- Evita vazamento de recursos (file descriptors)
+
+#### Observações
+
+- O arquivo `*_verification.txt` continua sendo gerado como artefato intermediário
+- Pode ser utilizado para debug ou validação da integridade dos FASTAs
+
+#### Resultado
+
+Após a correção:
+
+- O erro de `writelines` foi eliminado
+- A etapa de verificação passou a executar corretamente
+- O pipeline voltou a gerar arquivos `.arff`
+- O treinamento dos modelos foi restabelecido com sucesso
