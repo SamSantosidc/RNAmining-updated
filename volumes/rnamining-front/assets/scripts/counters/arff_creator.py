@@ -1,8 +1,9 @@
-from sys import argv
 import sys
 import os
+from sys import argv
 from Bio import SeqIO
 from Bio import Seq
+
 #call script: python arff_creator.py sequences.fa
 
 def Verification(input_verification,output_verification):
