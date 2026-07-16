@@ -46,32 +46,29 @@ def trinucleotides_counts(file_counts,output_file):
 	mapa = {"a" : 0,"c" : 1,"t" : 2,"g" : 3}
 	tri_nucleotides_counts =[[[0 for col in range(4)]for row in range(4)] for x in range(4)]
 	word = ""
-	toCompare = ["a","c","t","g"]
 	
 	my_seq.readline()
 
 	for line in my_seq:
-	    word = str(line.lower())[:-1]
-	    if(line[0] != '>'):
-	    	for x in range(0,len(word)-2,3):
-	    		if(word[x] in toCompare):
-	    			first = mapa[word[x]]
-	    		if(word[x+1] in toCompare):
-	    			seccond = mapa[word[x + 1]]
-	    		if(word[x+2] in toCompare):
-	    			third = mapa[word[x + 2]]
-	    			tri_nucleotides_counts[first][seccond][third] += 1
-	            
-	    if(line[0] == '>'):
+		word = str(line.lower())[:-1]
+		if(line[0] != '>'):
+			for x in range(0,len(word)-2,3):
+				triplet = word[x:x + 3]
 
-	    	for i in range(0, 4):
-	    		for j in range(0, 4):
-	    			for l in range(0, 4):
-	    				if(i ==3 & j==3 & l==3):
-	    					output_file.writelines(str(tri_nucleotides_counts[i][j][l]) + "\n")
-	    				else:
-	    					output_file.writelines(str(tri_nucleotides_counts[i][j][l]) + ", ")
-	    	tri_nucleotides_counts =[[[0 for col in range(4)]for row in range(4)] for x in range(4)]
+				if all(base in mapa for base in triplet):
+					first, second, third = (mapa[base] for base in triplet)
+					tri_nucleotides_counts[first][second][third] += 1
+	            
+		if(line[0] == '>'):
+
+			for i in range(0, 4):
+				for j in range(0, 4):
+					for l in range(0, 4):
+						if(i ==3 & j==3 & l==3):
+							output_file.writelines(str(tri_nucleotides_counts[i][j][l]) + "\n")
+						else:
+							output_file.writelines(str(tri_nucleotides_counts[i][j][l]) + ", ")
+			tri_nucleotides_counts =[[[0 for col in range(4)]for row in range(4)] for x in range(4)]
 				
 
 	#last sequence counts
@@ -177,4 +174,3 @@ def loadsequences(filename,prediction,coding_output,nc_output):
 
 	for item in listcodingRNA:
 		coding_output.writelines("%s%s" % (item.id, item.sequence))
-
