@@ -16,7 +16,7 @@
 
 		<h3 class="portfolio-text">Used databases</h3>
                 <h4 class="text-justify text-about" style="line-height:30px;text-indent:50px">
-                    <p><span class="specialchar">RNAmining</span> was validated by a series of tests. all the FASTA sequences used in the creation process of this tool can be downloaded <a href = "../examples/Sequences.zip">here.</a></p>
+                    <p><span class="specialchar">RNAmining</span> was validated by a series of tests. all the FASTA sequences used in the creation process of this tool can be downloaded <a href = "../data/examples/Sequences.zip">here.</a></p>
                 </h4>
 
 

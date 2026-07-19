@@ -18,7 +18,7 @@
                 <h2 class="text-center portfolio-text">Upload your file</h2>
                 <div class="container" style="text-align:center;">
                     <h4 class="text-center">Dataset</h4>
-                    <p> <a href='/examples/file.fasta'>.fasta</a> - <a href='/examples/dataset.zip'>examples</a> </p>
+                    <p> <a href='/data/examples/file.fasta'>.fasta</a> - <a href='/data/examples/dataset.zip'>examples</a> </p>
                     <img class="img-responsive" style="height:auto;max-width: 100%;margin:0 auto;display:block;padding-bottom:0;" src="../assets/images/Example.png"></img>
                     
                     

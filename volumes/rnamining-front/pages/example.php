@@ -19,17 +19,17 @@
         <h2 class="text-center portfolio-text">Results</h2>
 
         
-        <!--<a href="../examples/predictions.txt" download><button class="btn btn-primary" style="margin-bottom: 30px;">Download result data</button></a> !-->
+        <!--<a href="../data/examples/predictions.txt" download><button class="btn btn-primary" style="margin-bottom: 30px;">Download result data</button></a> !-->
         
-        <a href="../examples/Results/RNAmining.zip" download><button class="btn btn-primary" style="margin-bottom: 30px;">Download All Files</button></a></br>
+        <a href="../data/examples/Results/RNAmining.zip" download><button class="btn btn-primary" style="margin-bottom: 30px;">Download All Files</button></a></br>
 
                 
 
-        <a href="../examples/Results/codings.txt" download><button class="btn btn-primary" style="margin-bottom: 30px;">Download Coding Sequences</button></a></br>
+        <a href="../data/examples/Results/codings.txt" download><button class="btn btn-primary" style="margin-bottom: 30px;">Download Coding Sequences</button></a></br>
 
                 
 
-        <a href="../examples/Results/noncodings.txt" download><button class="btn btn-primary" style="margin-bottom: 30px;">Download Non-coding Sequences</button></a></br>
+        <a href="../data/examples/Results/noncodings.txt" download><button class="btn btn-primary" style="margin-bottom: 30px;">Download Non-coding Sequences</button></a></br>
 
                 
 
@@ -40,10 +40,10 @@
 
         </table>
 
-        <!--<iframe class="fundoIframe" src="../examples/allgenes/plot1.html" width="100%" frameborder="0" style="height: 500px;border-radius: 8px 8px 0 0;"></iframe>
-        <iframe class="fundoIframe" src="../examples/allgenes/plot2.html" width="100%" frameborder="0" style="height: 500px;margin-top:-5px;"></iframe>
-        <iframe class="fundoIframe" src="../examples/allgenes/plot3.html" width="100%" frameborder="0" style="height: 500px;margin-top:-5px;"></iframe>
-        <iframe class="fundoIframe" src="../examples/allgenes/plot4.html" width="100%" frameborder="0" style="height: 500px;margin-top:-5px; border-radius:0 0 8px 8px"></iframe> !-->
+        <!--<iframe class="fundoIframe" src="../data/examples/allgenes/plot1.html" width="100%" frameborder="0" style="height: 500px;border-radius: 8px 8px 0 0;"></iframe>
+        <iframe class="fundoIframe" src="../data/examples/allgenes/plot2.html" width="100%" frameborder="0" style="height: 500px;margin-top:-5px;"></iframe>
+        <iframe class="fundoIframe" src="../data/examples/allgenes/plot3.html" width="100%" frameborder="0" style="height: 500px;margin-top:-5px;"></iframe>
+        <iframe class="fundoIframe" src="../data/examples/allgenes/plot4.html" width="100%" frameborder="0" style="height: 500px;margin-top:-5px; border-radius:0 0 8px 8px"></iframe> !-->
 
     </div> <!-- END DIV CONTAINER-FLUID !-->
 
