@@ -17,7 +17,9 @@ services:
         restart: always
 
     php_rnamining:
-        build: ./docker/php
+        build:
+             context: .
+             dockerfile: docker/php/Dockerfile
         container_name: rnamining_php
         volumes:
             - ./web/public:${DOCUMENT_ROOT:-/var/www/html}:ro
@@ -26,7 +28,7 @@ services:
         environment:
              RNAMINING_PROJECT_DIR: /opt/rnamining
              RNAMINING_RUNTIME_DIR: /opt/rnamining/runtime
-             RNAMINING_PYTHON: /usr/local/anaconda3/bin/python3.8
+             RNAMINING_PYTHON: /usr/local/anaconda3/envs/rnamining/bin/python
         networks:
              - php
         restart: always
