@@ -11,11 +11,15 @@ from .features import feature_matrix
 def balance_classes(coding, noncoding, *, seed: int = 42):
     rng = random.Random(seed)
     count = min(len(coding), len(noncoding))
+
     coding = rng.sample(list(coding), count) if len(coding) > count else list(coding)
     noncoding = rng.sample(list(noncoding), count) if len(noncoding) > count else list(noncoding)
+
     combined = [(record, 1) for record in coding] + [(record, 0) for record in noncoding]
     rng.shuffle(combined)
+
     return combined
+
 
 
 def train_models(data_dir, output_dir, *, seed: int = 42):
@@ -25,19 +29,26 @@ def train_models(data_dir, output_dir, *, seed: int = 42):
     data = Path(data_dir)
     output = Path(output_dir)
     output.mkdir(parents=True, exist_ok=True)
+
     trained = []
     for coding_path in sorted((data / "coding").glob("*_coding_train.fa")):
         species = coding_path.name[: -len("_coding_train.fa")]
         noncoding_path = data / "noncoding" / f"{species}_noncoding_train.fa"
+
         if not noncoding_path.exists():
             continue
+
         balanced = balance_classes(read_fasta(coding_path), read_fasta(noncoding_path), seed=seed)
         records = [item[0] for item in balanced]
+
         labels = np.asarray([item[1] for item in balanced], dtype=int)
+
         model = XGBClassifier()
         model.fit(feature_matrix(records), labels)
         model_path = output / f"{species}.pkl"
+
         with model_path.open("wb") as handle:
             pickle.dump(model, handle, protocol=-1)
         trained.append(model_path)
+        
     return trained

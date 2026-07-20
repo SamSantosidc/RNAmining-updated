@@ -8,10 +8,20 @@ COPY environment.yml /tmp/rnamining-environment.yml
 
 
 # PHP 7.2 is based on Debian Stretch, whose repositories are archived.
-RUN sed -i 's/deb.debian.org/archive.debian.org/g; s/security.debian.org/archive.debian.org/g; /stretch-updates/d' /etc/apt/sources.list \
-    && printf 'Acquire::Check-Valid-Until "false";\n' > /etc/apt/apt.conf.d/99archive \
+# Debian Stretch is archived. These repositories are only used
+# temporarily to reproduce the legacy PHP environment.
+RUN printf '%s\n' \
+        'deb [trusted=yes] http://archive.debian.org/debian stretch main' \
+        'deb [trusted=yes] http://archive.debian.org/debian-security stretch/updates main' \
+        > /etc/apt/sources.list \
+    && printf 'Acquire::Check-Valid-Until "false";\n' \
+        > /etc/apt/apt.conf.d/99archive \
     && apt-get update \
-    && apt-get install -y --no-install-recommends ca-certificates curl libzip-dev zlib1g-dev \
+    && apt-get install -y --no-install-recommends \
+        ca-certificates \
+        curl \
+        libzip-dev \
+        zlib1g-dev \
     && docker-php-ext-install zip \
     && rm -rf /var/lib/apt/lists/*
 
