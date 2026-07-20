@@ -13,7 +13,9 @@ TRINUCLEOTIDES = tuple("".join(parts) for parts in product("actg", repeat=3))
 
 
 def trinucleotide_counts(sequence: str) -> list[int]:
-    counts = {triplet: 0 for triplet in TRINUCLEOTIDES}
+    counts = {
+        triplet: 0 for triplet in TRINUCLEOTIDES
+        }
     sequence = sequence.lower()
 
     for offset in range(0, len(sequence) - 2, 3):
