@@ -1,53 +1,25 @@
 # RNAmining
 
-https://gitlab.com/integrativebioinformatics/RNAmining
+RNAmining predicts coding potential from RNA FASTA sequences using 16 established XGBoost models. This repository keeps the website, implementation, models, scientific data, and generated state separate without changing the model representation or output format.
 
-## Containers
+## Install and run
 
-- *Webserver* - Nginx;
-- *Backend PHP* - PHP-fpm;
-
-2 Containers.
-
-## Requisites
-
-- Git version 2 or above
-- Docker version 17.09.1-ce or above (https://docs.docker.com/install/)
-- Docker Compose 1.20.1 or above (https://docs.docker.com/compose/install)
-
-## Installation
-
-Clone the repository recursively with:
-```
-user@host:~# git clone https://gitlab.com/integrativebioinformatics/RNAmining.git
-```
-This mode the repositorys the frontend and backend are cloned.
-
-
-## Pre-execution
-
-Create file `.env` in root directory on repository informing enviremont variables, example content:
+Python 3.8 or newer is required. Install the package in editable mode:
 
 ```bash
-user@host:~/RNAmining# vim .env
-DOCUMENT_ROOT=/var/www/html
+pip install -e .
 ```
 
-Define permissions for user `www-data` in directory back/front which will be mounted as volume in container. Because the user may not exist on the host host, we use the gid that is standard on any system. Execute:
+Prepare the local S5 archive, train models, or predict sequences:
 
 ```bash
-user@host:~/RNAmining# chown 33:33 -R volumes/rnamining-front
+rnamining prepare-data --input S5_File.zip --output data/
+rnamining train --data data/processed/train_test_split --output models/coding_prediction/
+rnamining predict --input sequences.fa --organism Homo_sapiens --output outputs/example/
 ```
 
-## Execution
+Start the direct local deployment with `docker compose -f compose.local.yaml up --build`; use `compose.proxy.yaml` when attaching to the existing external proxy network.
 
-In the root repository, execute the next command:
+See [architecture](docs/architecture.md), [data preparation](docs/data-preparation.md), [model training](docs/model-training.md), [model evaluation](docs/model-evaluation.md), and the [web application](docs/web-application.md) for details.
 
-```bash
-user@host:~/RNAmining# docker-compose -f docker-compose2.yml up --build -d
-```
-The option `-d` execute containers in background.
-
-Cite the code: [![DOI](https://zenodo.org/badge/359168403.svg)](https://zenodo.org/badge/latestdoi/359168403)
-
-Enjoy!
+Please cite the project using its [Zenodo record](https://zenodo.org/badge/latestdoi/359168403).

@@ -1,0 +1,37 @@
+version: "3.4"
+
+services:
+
+    nginx_rnamining:
+        build: ./docker/nginx
+        #ports:
+         #   - "80:80"
+        container_name: rnamining_webserver
+        volumes:
+            - ./web/public:${DOCUMENT_ROOT:-/var/www/html}:ro
+        depends_on:
+            - php_rnamining
+        networks:
+            - gatewayapps_proxy
+            - php
+        restart: always
+
+    php_rnamining:
+        build: ./docker/php
+        container_name: rnamining_php
+        volumes:
+            - ./web/public:${DOCUMENT_ROOT:-/var/www/html}:ro
+            - ./:/opt/rnamining
+            - ./runtime:/opt/rnamining/runtime
+        environment:
+             RNAMINING_PROJECT_DIR: /opt/rnamining
+             RNAMINING_RUNTIME_DIR: /opt/rnamining/runtime
+             RNAMINING_PYTHON: /usr/local/anaconda3/bin/python3.8
+        networks:
+             - php
+        restart: always
+
+networks:
+    php:
+    gatewayapps_proxy:
+        external: true

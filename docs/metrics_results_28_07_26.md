@@ -7,7 +7,7 @@
 
 This document records the current evaluation baseline for the organism-specific RNAmining models. The evaluation covers 16 organisms and 163,466 test sequences. All 16 executions completed successfully, every prediction was matched to its ground-truth sequence ID, and no predictions were missing.
 
-The detailed source data is available in [`metrics_rnamining.csv`](../rnamining_out/metrics_rnamining.csv), while [`execucao_rnamining.csv`](../rnamining_out/execucao_rnamining.csv) records the execution status. These generated files are ignored by Git, so this document is the repository's durable snapshot of their results.
+The detailed source data is generated as `outputs/evaluation/metrics_rnamining.csv`, while `outputs/evaluation/execucao_rnamining.csv` records execution status. These files are ignored by Git, so this document is the repository's durable snapshot of their results.
 
 ## Current dependencies
 
