@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rnamining"
+version = "1.0.4"
+description = "Coding-potential prediction for RNA sequences"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+  "biopython>=1.78",
+  "numpy>=1.18",
+  "pandas>=0.23.3",
+  "scikit-learn>=0.21.3",
+  "scipy>=1.4",
+  "xgboost>=1.2.0",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=7"]
+
+[project.scripts]
+rnamining = "rnamining.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+

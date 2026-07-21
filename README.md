@@ -1,53 +1,61 @@
 # RNAmining
 
-https://gitlab.com/integrativebioinformatics/RNAmining
+RNAmining predicts coding potential from RNA FASTA sequences using 16 established XGBoost models. The web application runs with Docker, while the CLI, notebooks, and development tools can run locally in a Conda environment.
 
-## Containers
+## Web application with Docker
 
-- *Webserver* - Nginx;
-- *Backend PHP* - PHP-fpm;
-
-2 Containers.
-
-## Requisites
-
-- Git version 2 or above
-- Docker version 17.09.1-ce or above (https://docs.docker.com/install/)
-- Docker Compose 1.20.1 or above (https://docs.docker.com/compose/install)
-
-## Installation
-
-Clone the repository recursively with:
-```
-user@host:~# git clone https://gitlab.com/integrativebioinformatics/RNAmining.git
-```
-This mode the repositorys the frontend and backend are cloned.
-
-
-## Pre-execution
-
-Create file `.env` in root directory on repository informing enviremont variables, example content:
+Docker users do not need Python or Conda installed on the host. Copy the environment configuration and start the local deployment:
 
 ```bash
-user@host:~/RNAmining# vim .env
-DOCUMENT_ROOT=/var/www/html
+cp .env.exemple .env
+mkdir -p runtime/jobs
+sudo chown -R 33:33 runtime
+docker compose -f compose.local.yaml up --build -d
 ```
 
-Define permissions for user `www-data` in directory back/front which will be mounted as volume in container. Because the user may not exist on the host host, we use the gid that is standard on any system. Execute:
+Open <http://localhost/> and use the **Run** page to upload a FASTA file. Stop the application with:
 
 ```bash
-user@host:~/RNAmining# chown 33:33 -R volumes/rnamining-front
+docker compose -f compose.local.yaml down
 ```
 
-## Execution
+UID/GID 33 is the `www-data` account used by PHP-FPM. The ownership command allows uploaded jobs and result files to be written to the bind-mounted `runtime/` directory.
 
-In the root repository, execute the next command:
+`compose.proxy.yaml` provides the existing deployment mode for hosts that already have the external `gatewayapps_proxy` Docker network. See the [web application guide](docs/web-application.md) for configuration, verification, and troubleshooting.
+
+## Local CLI and notebooks with Conda
+
+Conda creates the isolated environment; pip then installs the local RNAmining package and its `rnamining` command into that active environment:
 
 ```bash
-user@host:~/RNAmining# docker-compose -f docker-compose2.yml up --build -d
+conda env create -f environment.yml
+conda activate rnamining
+python -m pip install -e .
+rnamining --help
 ```
-The option `-d` execute containers in background.
 
-Cite the code: [![DOI](https://zenodo.org/badge/359168403.svg)](https://zenodo.org/badge/latestdoi/359168403)
+Editable mode imports RNAmining directly from `src/`, so Python source changes are available without reinstalling. For tests, install the optional test dependency and run the suite:
 
-Enjoy!
+```bash
+python -m pip install -e '.[test]'
+pytest
+```
+
+Start the interactive notebooks from the activated environment with `jupyter lab`. Update or remove the environment with:
+
+```bash
+conda env update --file environment.yml --prune
+conda env remove --name rnamining
+```
+
+## CLI workflows
+
+```bash
+rnamining prepare-data --input S5_File.zip --output data/
+rnamining train --data data/processed/train_test_split --output models/coding_prediction/
+rnamining predict --input sequences.fa --organism Homo_sapiens --output outputs/example/
+```
+
+See [architecture](docs/architecture.md), [data preparation](docs/data-preparation.md), [model training](docs/model-training.md), and [model evaluation](docs/model-evaluation.md) for details.
+
+Please cite the project using its [Zenodo record](https://zenodo.org/badge/latestdoi/359168403).

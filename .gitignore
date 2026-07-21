@@ -1,5 +1,22 @@
 .env
-rnamining_out/
-*.arff
+.venv/
 __pycache__/
-*.pyc
+*.py[cod]
+*.arff
+*.egg-info/
+.pytest_cache/
+
+# S5 is a local scientific input; generated preparation products are reproducible.
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+data/evaluation/*
+!data/evaluation/.gitkeep
+S5_File.zip
+
+# Temporary web jobs and evaluation runs are never source artifacts.
+runtime/jobs/*
+!runtime/jobs/.gitkeep
+outputs/evaluation/*
+!outputs/evaluation/.gitkeep
