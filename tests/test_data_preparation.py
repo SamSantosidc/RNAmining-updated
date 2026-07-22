@@ -1,3 +1,4 @@
+import csv
 import zipfile
 
 import pytest
@@ -39,3 +40,21 @@ def test_preparation_validates_complete_species_pairs(tmp_path):
     with pytest.raises(ValueError, match="missing"):
         prepare_data(archive, tmp_path / "data", expected_species=("Alpha_beta", "Missing_species"))
 
+
+def test_preparation_reports_each_degenerate_iupac_base_occurrence(tmp_path):
+    archive = tmp_path / "S5_File.zip"
+    with zipfile.ZipFile(archive, "w") as source:
+        source.writestr("S5/Alpha_beta.cds.fa", ">c\nRrYySsWwKkMmBbDdHhVvNnUuXx\n")
+        source.writestr("S5/Alpha_beta.ncrna.fa", ">n\nACGT\n")
+
+    root = tmp_path / "data"
+    prepare_data(archive, root, expected_species=("Alpha_beta",))
+
+    with (root / "reports/organism_sequences_stats.csv").open(newline="", encoding="utf-8") as report:
+        rows = list(csv.DictReader(report))
+
+    coding = next(row for row in rows if row["seq_type"] == "cds")
+    noncoding = next(row for row in rows if row["seq_type"] == "ncrna")
+    for base in "RYSWKMBDHVN":
+        assert coding[base] == "2"
+        assert noncoding[base] == "0"

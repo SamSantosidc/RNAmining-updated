@@ -7,6 +7,7 @@ import gzip
 import random
 import statistics
 import zipfile
+from collections import Counter
 from pathlib import Path
 from typing import Iterable, Optional
 
@@ -19,6 +20,8 @@ SPECIES = (
     "Notechis_scutatus", "Ornithorhynchus_anatinus", "Petromyzon_marinus",
     "Rattus_norvegicus", "Sphenodon_punctatus", "Xenopus_tropicalis",
 )
+
+DEGENERATE_BASES = tuple("RYSWKMBDHVN")
 
 
 def _classify_name(name: str) -> Optional[tuple[str, str]]:
@@ -60,7 +63,14 @@ def dataset_statistics(files: dict[str, dict[str, Path]]) -> list[dict]:
 
         for kind in ("cds", "ncrna"):
             path = pair.get(kind)
-            lengths = [len(record.sequence) for record in read_fasta(path)] if path else []
+            records = read_fasta(path) if path else []
+            lengths = [len(record.sequence) for record in records]
+            base_counts = Counter(
+                base
+                for record in records
+                for base in record.sequence.upper()
+                if base in DEGENERATE_BASES
+            )
             rows.append({
                 "species": species,
                 "seq_type": kind,
@@ -72,6 +82,7 @@ def dataset_statistics(files: dict[str, dict[str, Path]]) -> list[dict]:
                 "max_len": max(lengths) if lengths else None,
                 "mean_len": statistics.mean(lengths) if lengths else None,
                 "median_len": statistics.median(lengths) if lengths else None,
+                **{base: base_counts[base] for base in DEGENERATE_BASES},
             })
 
     return rows
