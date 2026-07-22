@@ -1,5 +1,3 @@
-version: "3.4"
-
 services:
 
     nginx_rnamining:
@@ -28,7 +26,7 @@ services:
         environment:
              RNAMINING_PROJECT_DIR: /opt/rnamining
              RNAMINING_RUNTIME_DIR: /opt/rnamining/runtime
-             RNAMINING_PYTHON: /usr/local/anaconda3/envs/rnamining/bin/python
+             RNAMINING_PYTHON: /opt/conda/envs/rnamining/bin/python
         networks:
              - php
         restart: always

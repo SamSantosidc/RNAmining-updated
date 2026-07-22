@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-pytest.importorskip("xgboost")
+xgboost = pytest.importorskip("xgboost")
 pytest.importorskip("sklearn")
 
 from rnamining.inference import predict_file
@@ -12,6 +12,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_reorganized_inference_matches_versioned_example(tmp_path):
+    if xgboost.__version__ != "2.0.3":
+        pytest.skip("Frozen legacy pickle regression requires XGBoost 2.0.3")
     output = tmp_path / "output"
     try:
         predict_file(ROOT / "tests/fixtures/anolis_regression.fa", "Anolis_carolinensis", output, model_dir=ROOT / "models/coding_prediction")
