@@ -23,7 +23,7 @@ The recorded evaluation was produced in the following Python environment:
 | XGBoost | 3.3.0 |
 | Biopython | 1.87 |
 
-The web deployment uses Docker Compose file format 3.4, PHP 7.2.2-FPM, Nginx, R, and Anaconda 2020.07. The Nginx image and the Conda-installed XGBoost and Biopython packages are not pinned to exact versions in the current Dockerfiles; therefore, rebuilding the container may resolve versions different from the evaluation environment above.
+The web deployment uses the current Compose Specification, PHP 8.5.8-FPM, Nginx 1.30.4, and Miniforge 26.3.2-2. The server images, Miniforge installer, and scientific dependencies are pinned to exact versions; the installer is also verified with its published SHA-256 checksum during the image build.
 
 ## Pipeline overview
 

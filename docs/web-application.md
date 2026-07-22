@@ -23,7 +23,7 @@ After installing the test extra in the local Conda environment, the same end-to-
 RNAMINING_WEB_URL=http://localhost pytest tests/test_web_live.py -v
 ```
 
-Configure PHP with `RNAMINING_PROJECT_DIR`, `RNAMINING_RUNTIME_DIR`, and `RNAMINING_PYTHON`. Compose sets these to `/opt/rnamining`, `/opt/rnamining/runtime`, and `/usr/local/anaconda3/envs/rnamining/bin/python`. The Python environment is built from the repository's shared `environment.yml`. PHP-FPM uses UID/GID 33, so the ownership command above is required for writable job storage on Linux bind mounts.
+Configure PHP with `RNAMINING_PROJECT_DIR`, `RNAMINING_RUNTIME_DIR`, and `RNAMINING_PYTHON`. Compose sets these to `/opt/rnamining`, `/opt/rnamining/runtime`, and `/opt/conda/envs/rnamining/bin/python`. The PHP image uses PHP 8.5.8-FPM and checksum-verified Miniforge 26.3.2-2; the Python environment is built from the repository's shared `environment.yml`. Nginx uses the pinned stable 1.30.4 image. The pinned Miniforge installer preserves the existing Linux x86-64 runtime scope. PHP-FPM uses UID/GID 33, so the ownership command above is required for writable job storage on Linux bind mounts.
 
 If WSL reports that `docker` is unavailable, enable Docker Desktop integration for the active WSL distribution and rerun `docker compose version` before building.
 

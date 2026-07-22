@@ -1,5 +1,5 @@
-FROM nginx
+FROM nginx:1.30.4-trixie
 
-MAINTAINER Bruno Correia <brunogomescorreia@gmail.com>
+LABEL org.opencontainers.image.authors="Bruno Correia <brunogomescorreia@gmail.com>"
 
 COPY ./config/rnamining.conf /etc/nginx/conf.d/default.conf
