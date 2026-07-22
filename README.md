@@ -25,27 +25,26 @@ UID/GID 33 is the `www-data` account used by PHP-FPM. The ownership command allo
 
 ## Local CLI and notebooks with Conda
 
-Conda creates the isolated environment; pip then installs the local RNAmining package and its `rnamining` command into that active environment:
+The shared specification targets Python 3.14.6 and pins the scientific, test, and notebook dependencies exactly. Create it locally with the `rnamining-py314` name override so it can coexist with an older RNAmining environment. Pip then installs the local package and its `rnamining` command into that active environment:
 
 ```bash
-conda env create -f environment.yml
-conda activate rnamining
-python -m pip install -e .
+conda env create --name rnamining-py314 --file environment.yml
+conda activate rnamining-py314
+python -m pip install -e '.[test,notebooks]'
 rnamining --help
 ```
 
-Editable mode imports RNAmining directly from `src/`, so Python source changes are available without reinstalling. For tests, install the optional test dependency and run the suite:
+The `name: rnamining` entry remains in `environment.yml` for existing shared consumers; Conda's command-line override determines the local environment name. Editable mode imports RNAmining directly from `src/`, so Python source changes are available without reinstalling. Run the test suite with:
 
 ```bash
-python -m pip install -e '.[test]'
 pytest
 ```
 
 Start the interactive notebooks from the activated environment with `jupyter lab`. Update or remove the environment with:
 
 ```bash
-conda env update --file environment.yml --prune
-conda env remove --name rnamining
+conda env update --name rnamining-py314 --file environment.yml --prune
+conda env remove --name rnamining-py314
 ```
 
 ## CLI workflows

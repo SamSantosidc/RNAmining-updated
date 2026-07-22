@@ -20,8 +20,8 @@ def test_docker_and_local_workflows_share_conda_specification():
     environment = (ROOT / "environment.yml").read_text()
     dockerfile = (ROOT / "docker/php/Dockerfile").read_text()
     assert "name: rnamining" in environment
-    assert "python=3.8.20" in environment
-    assert "libxgboost=2.0.3=cpu*" in environment
+    assert "python=3.14.6" in environment
+    assert "libxgboost=3.3.0=cpu*" in environment
     assert "nodefaults" in environment
     assert "COPY environment.yml" in dockerfile
     assert "conda env create" in dockerfile
