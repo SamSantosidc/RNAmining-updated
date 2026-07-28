@@ -1,6 +1,8 @@
 import re
 from pathlib import Path
 
+from rnamining.data_preparation import SPECIES
+
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -61,3 +63,9 @@ def test_handlers_control_job_ids_files_and_rendering():
     assert "RNAmining.zip" in download and "File not found" in download
     assert "htmlspecialchars" in results and "api/download.php" in results
     assert re.search(r"\^\[a-f0-9\]\{32\}\$", config)
+
+
+def test_web_organism_selector_matches_supported_species_catalog():
+    analysis = (ROOT / "web/public/analysis.php").read_text()
+    options = set(re.findall(r'<option[^>]+value\s*=\s*"([^"]+)"', analysis))
+    assert options == set(SPECIES)

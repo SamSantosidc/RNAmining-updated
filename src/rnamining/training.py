@@ -4,6 +4,7 @@ import pickle
 import random
 from pathlib import Path
 
+from .data_preparation import validate_supported_species
 from .fasta import read_fasta
 from .features import feature_matrix
 
@@ -43,6 +44,7 @@ def train_single_species(data_dir, species: str, output_dir, *, seed: int = 42):
     if not species or "/" in species or "\\" in species or species in {".", ".."}:
         raise ValueError("Species must be a filename-safe identifier.")
 
+    validate_supported_species(species)
     data = Path(data_dir)
     coding_path = data / "coding" / f"{species}_coding_train.fa"
     noncoding_path = data / "noncoding" / f"{species}_noncoding_train.fa"

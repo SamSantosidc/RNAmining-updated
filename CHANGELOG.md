@@ -10,7 +10,9 @@ evaluation, and statistics formats.
 
 `rnamining train-species` trains only the explicitly selected species from the
 prepared training split and writes its existing `<species>.pkl` model format.
-The original `prepare-data` and `train` commands remain available unchanged.
+Both commands require the species to be approved in
+`rnamining.data_preparation.SPECIES`. The original `prepare-data` and `train`
+commands remain available unchanged.
 
 ## Fix ambiguous nucleotides in trinucleotide feature extraction
 

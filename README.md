@@ -67,6 +67,11 @@ rnamining train-species \
   --output models/coding_prediction/
 ```
 
+Both single-species commands accept only organisms approved in
+`rnamining.data_preparation.SPECIES`. See the
+[data preparation guide](docs/data-preparation.md#approve-a-new-species) before
+adding another organism.
+
 See [architecture](docs/architecture.md), [data preparation](docs/data-preparation.md), [model training](docs/model-training.md), and [model evaluation](docs/model-evaluation.md) for details.
 
 Please cite the project using its [Zenodo record](https://zenodo.org/badge/latestdoi/359168403).

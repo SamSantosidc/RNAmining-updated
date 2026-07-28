@@ -20,4 +20,7 @@ rnamining train-species \
 ```
 
 This command requires both matching training FASTAs and writes only
-`Anolis_carolinensis.pkl`; other prepared species are not trained.
+`Anolis_carolinensis.pkl`; other prepared species are not trained. The value
+passed to `--species` must already be approved in
+`rnamining.data_preparation.SPECIES`; see the controlled addition procedure in
+the [data preparation guide](data-preparation.md#approve-a-new-species).

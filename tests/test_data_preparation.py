@@ -102,12 +102,18 @@ def test_single_species_preparation_accumulates_and_replaces_report_rows(tmp_pat
     root = tmp_path / "data"
     alpha = tmp_path / "alpha.zip"
     beta = tmp_path / "beta.zip"
-    make_single_species_zip(alpha, species="Alpha_beta", assembly="Alpha1")
-    make_single_species_zip(beta, species="Beta_gamma", assembly="Beta1")
+    make_single_species_zip(alpha, species="Anolis_carolinensis", assembly="Alpha1")
+    make_single_species_zip(beta, species="Homo_sapiens", assembly="Beta1")
 
     prepare_single_species(alpha, root)
     prepare_single_species(beta, root)
-    make_single_species_zip(alpha, species="Alpha_beta", assembly="Alpha2", coding_count=2, noncoding_count=2)
+    make_single_species_zip(
+        alpha,
+        species="Anolis_carolinensis",
+        assembly="Alpha2",
+        coding_count=2,
+        noncoding_count=2,
+    )
     prepare_single_species(alpha, root)
 
     with (root / "reports/organism_sequences_stats.csv").open(
@@ -116,12 +122,28 @@ def test_single_species_preparation_accumulates_and_replaces_report_rows(tmp_pat
     ) as report:
         rows = list(csv.DictReader(report))
 
-    assert {row["species"] for row in rows} == {"Alpha_beta", "Beta_gamma"}
-    assert len([row for row in rows if row["species"] == "Alpha_beta"]) == 2
+    assert {row["species"] for row in rows} == {
+        "Anolis_carolinensis",
+        "Homo_sapiens",
+    }
+    assert len([row for row in rows if row["species"] == "Anolis_carolinensis"]) == 2
     assert {
-        row["n_sequences"] for row in rows if row["species"] == "Alpha_beta"
+        row["n_sequences"]
+        for row in rows
+        if row["species"] == "Anolis_carolinensis"
     } == {"2"}
-    assert (root / "raw/Beta_gamma.cds.fa").is_file()
+    assert (root / "raw/Homo_sapiens.cds.fa").is_file()
+
+
+def test_single_species_preparation_rejects_species_outside_catalog(tmp_path):
+    archive = tmp_path / "unsupported.zip"
+    make_single_species_zip(archive, species="Unsupported_species")
+
+    output = tmp_path / "data"
+    with pytest.raises(ValueError, match=r"data_preparation\.SPECIES"):
+        prepare_single_species(archive, output)
+
+    assert not output.exists()
 
 
 @pytest.mark.parametrize(
@@ -184,9 +206,9 @@ def test_single_species_preparation_rejects_invalid_archives_without_outputs(
 def test_single_species_preparation_validates_compression_and_fasta_before_writing(tmp_path):
     archive = tmp_path / "invalid.zip"
     with zipfile.ZipFile(archive, "w") as source:
-        source.writestr("Species.Assembly.cds.all.fa.gz", b"not gzip")
+        source.writestr("Anolis_carolinensis.Assembly.cds.all.fa.gz", b"not gzip")
         source.writestr(
-            "Species.Assembly.ncrna.fa.gz",
+            "Anolis_carolinensis.Assembly.ncrna.fa.gz",
             gzip.compress(b">n\nCCC\n"),
         )
 
@@ -199,11 +221,11 @@ def test_single_species_preparation_validates_compression_and_fasta_before_writi
     archive = tmp_path / "invalid-fasta.zip"
     with zipfile.ZipFile(archive, "w") as source:
         source.writestr(
-            "Species.Assembly.cds.all.fa.gz",
+            "Anolis_carolinensis.Assembly.cds.all.fa.gz",
             gzip.compress(b"not fasta\n"),
         )
         source.writestr(
-            "Species.Assembly.ncrna.fa.gz",
+            "Anolis_carolinensis.Assembly.ncrna.fa.gz",
             gzip.compress(b">n\nCCC\n"),
         )
 

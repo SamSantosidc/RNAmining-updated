@@ -27,6 +27,17 @@ SINGLE_SPECIES_CODING_SUFFIX = ".cds.all.fa.gz"
 SINGLE_SPECIES_NONCODING_SUFFIX = ".ncrna.fa.gz"
 
 
+def validate_supported_species(species: str) -> str:
+    """Require a species to be explicitly approved in the project catalog."""
+    if species not in SPECIES:
+        raise ValueError(
+            f"Unsupported species {species!r}. Add it to "
+            "rnamining.data_preparation.SPECIES before preparing or training it."
+        )
+
+    return species
+
+
 def _classify_name(name: str) -> Optional[tuple[str, str]]:
     base = Path(name).name
     lower = base.lower()
@@ -111,6 +122,7 @@ def _single_species_archive(input_zip) -> tuple[str, list[FastaRecord], list[Fas
         if not species or not assembly:
             raise ValueError("Single-species filenames must include both species and assembly.")
 
+        validate_supported_species(species)
         coding_payload = gzip.decompress(archive.read(coding_info))
         noncoding_payload = gzip.decompress(archive.read(noncoding_info))
 

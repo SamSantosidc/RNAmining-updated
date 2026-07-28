@@ -23,10 +23,11 @@ Anolis_carolinensis.AnoCar2.0v2.ncrna.fa.gz
 rnamining prepare-species --input Anolis_carolinensis.zip --output data/
 ```
 
-The command accepts species outside the established 16, writes the same raw,
-split, evaluation, and report formats, and preserves other species already
-prepared under the output directory. Preparing the same species again replaces
-that species' artifacts. The species is inferred from the filenames, while the
+For governance and safety, the command accepts only species explicitly listed
+in `rnamining.data_preparation.SPECIES`. It writes the same raw, split,
+evaluation, and report formats and preserves other species already prepared
+under the output directory. Preparing the same species again replaces that
+species' artifacts. The species is inferred from the filenames, while the
 assembly may contain dots. Both FASTA members must be at the ZIP root, and the
 ZIP must not contain additional files.
 
@@ -36,3 +37,21 @@ The generated training inputs retain the established names:
 data/processed/train_test_split/coding/Anolis_carolinensis_coding_train.fa
 data/processed/train_test_split/noncoding/Anolis_carolinensis_noncoding_train.fa
 ```
+
+## Approve a new species
+
+Adding a species is a controlled repository change, not an end-user operation.
+Before running `prepare-species` or `train-species` for a new species:
+
+1. Add its canonical underscore-separated identifier to `SPECIES` in
+   `src/rnamining/data_preparation.py`.
+2. Add the same identifier and display name to the organism selector in
+   `web/public/analysis.php`.
+3. Update the relevant documentation and tests, and submit the change for code
+   review.
+4. Prepare and validate the dataset, then train and evaluate the new model
+   before deploying its `.pkl` artifact.
+
+Both single-species commands reject identifiers absent from `SPECIES`. Access
+to the prepared data and model directories must also remain restricted to
+authorized operators; the allowlist does not replace filesystem permissions.

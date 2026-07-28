@@ -57,7 +57,7 @@ def test_train_single_species_cli_trains_only_requested_species(tmp_path, monkey
     noncoding = tmp_path / "data/noncoding"
     coding.mkdir(parents=True)
     noncoding.mkdir(parents=True)
-    for species in ("Target_species", "Other_species"):
+    for species in ("Anolis_carolinensis", "Homo_sapiens"):
         (coding / f"{species}_coding_train.fa").write_text(">c\nAAA\n")
         (noncoding / f"{species}_noncoding_train.fa").write_text(">n\nCCC\n")
 
@@ -68,18 +68,18 @@ def test_train_single_species_cli_trains_only_requested_species(tmp_path, monkey
         "--data",
         str(tmp_path / "data"),
         "--species",
-        "Target_species",
+        "Anolis_carolinensis",
         "--output",
         str(output),
     ]) == 0
-    assert (output / "Target_species.pkl").is_file()
-    assert not (output / "Other_species.pkl").exists()
+    assert (output / "Anolis_carolinensis.pkl").is_file()
+    assert not (output / "Homo_sapiens.pkl").exists()
 
 
 def test_train_single_species_cli_requires_both_classes(tmp_path):
     coding = tmp_path / "data/coding"
     coding.mkdir(parents=True)
-    (coding / "Test_species_coding_train.fa").write_text(">c\nAAA\n")
+    (coding / "Gallus_gallus_coding_train.fa").write_text(">c\nAAA\n")
 
     with pytest.raises(FileNotFoundError, match="noncoding"):
         main([
@@ -87,7 +87,20 @@ def test_train_single_species_cli_requires_both_classes(tmp_path):
             "--data",
             str(tmp_path / "data"),
             "--species",
-            "Test_species",
+            "Gallus_gallus",
+            "--output",
+            str(tmp_path / "models"),
+        ])
+
+
+def test_train_single_species_cli_rejects_species_outside_catalog(tmp_path):
+    with pytest.raises(ValueError, match=r"data_preparation\.SPECIES"):
+        main([
+            "train-species",
+            "--data",
+            str(tmp_path / "data"),
+            "--species",
+            "Unsupported_species",
             "--output",
             str(tmp_path / "models"),
         ])

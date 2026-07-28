@@ -88,6 +88,7 @@
                                         <option value = "Notechis_scutatus">Notechis scutatus</option>
                                         <option value = "Ornithorhynchus_anatinus">Ornithorhynchus anatinus</option>
                                         <option value = "Petromyzon_marinus">Petromyzon marinus</option>
+                                        <option value = "Rattus_norvegicus">Rattus norvegicus</option>
                                         <option value = "Sphenodon_punctatus">Sphenodon punctatus</option>
                                         <option value = "Xenopus_tropicalis">Xenopus tropicalis</option>
 
