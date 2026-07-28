@@ -8,3 +8,16 @@ Each organism pair is balanced and converted to the original 64 trinucleotide fe
 
 The 16 current pickle files in `models/coding_prediction/` are versioned model artifacts. Retraining overwrites them only when explicitly requested.
 
+## Train one species
+
+To train only one prepared species, select it explicitly:
+
+```bash
+rnamining train-species \
+  --data data/processed/train_test_split \
+  --species Anolis_carolinensis \
+  --output models/coding_prediction/
+```
+
+This command requires both matching training FASTAs and writes only
+`Anolis_carolinensis.pkl`; other prepared species are not trained.

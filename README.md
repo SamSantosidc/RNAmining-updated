@@ -55,6 +55,18 @@ rnamining train --data data/processed/train_test_split --output models/coding_pr
 rnamining predict --input sequences.fa --organism Homo_sapiens --output outputs/example/
 ```
 
+Prepare and train one additional species with the same data and model formats:
+
+```bash
+rnamining prepare-species \
+  --input Anolis_carolinensis.zip \
+  --output data/
+rnamining train-species \
+  --data data/processed/train_test_split \
+  --species Anolis_carolinensis \
+  --output models/coding_prediction/
+```
+
 See [architecture](docs/architecture.md), [data preparation](docs/data-preparation.md), [model training](docs/model-training.md), and [model evaluation](docs/model-evaluation.md) for details.
 
 Please cite the project using its [Zenodo record](https://zenodo.org/badge/latestdoi/359168403).

@@ -2,9 +2,9 @@
 
 import argparse
 
-from .data_preparation import prepare_data
+from .data_preparation import prepare_data, prepare_single_species
 from .inference import predict_file
-from .training import train_models
+from .training import train_models, train_single_species
 
 
 def build_parser():
@@ -16,9 +16,24 @@ def build_parser():
     prepare.add_argument("--input", required=True)
     prepare.add_argument("--output", required=True)
 
+    prepare_species = commands.add_parser(
+        "prepare-species",
+        help="extract and prepare one species",
+    )
+    prepare_species.add_argument("--input", required=True)
+    prepare_species.add_argument("--output", required=True)
+
     train = commands.add_parser("train", help="train one model per organism")
     train.add_argument("--data", required=True)
     train.add_argument("--output", required=True)
+
+    train_species = commands.add_parser(
+        "train-species",
+        help="train one explicitly selected species",
+    )
+    train_species.add_argument("--data", required=True)
+    train_species.add_argument("--species", required=True)
+    train_species.add_argument("--output", required=True)
 
     predict = commands.add_parser("predict", help="predict RNA coding potential")
     predict.add_argument("--input", required=True)
@@ -36,8 +51,14 @@ def main(argv=None):
     if args.command == "prepare-data":
         prepare_data(args.input, args.output)
 
+    elif args.command == "prepare-species":
+        prepare_single_species(args.input, args.output)
+
     elif args.command == "train":
         train_models(args.data, args.output)
+
+    elif args.command == "train-species":
+        train_single_species(args.data, args.species, args.output)
 
     elif args.command == "predict":
         predict_file(args.input, args.organism, args.output, model_dir=args.models)
