@@ -25,16 +25,19 @@ UID/GID 33 is the `www-data` account used by PHP-FPM. The ownership command allo
 
 ## Local CLI and notebooks with Conda
 
-The shared specification targets Python 3.14.6 and pins the scientific, test, and notebook dependencies exactly. Create it locally with the `rnamining-py314` name override so it can coexist with an older RNAmining environment. Pip then installs the local package and its `rnamining` command into that active environment:
+The shared specification targets Python 3.14.6 and pins the scientific, test,
+and notebook dependencies exactly. The default environment name declared in
+`environment.yml` is `rnamining`:
 
 ```bash
-conda env create --name rnamining-py314 --file environment.yml
-conda activate rnamining-py314
+conda env create --file environment.yml
+conda activate rnamining
 python -m pip install -e '.[test,notebooks]'
 rnamining --help
 ```
 
-The `name: rnamining` entry remains in `environment.yml` for existing shared consumers; Conda's command-line override determines the local environment name. Editable mode imports RNAmining directly from `src/`, so Python source changes are available without reinstalling. Run the test suite with:
+Editable mode imports RNAmining directly from `src/`, so Python source changes
+are available without reinstalling. Run the test suite with:
 
 ```bash
 pytest
@@ -43,34 +46,75 @@ pytest
 Start the interactive notebooks from the activated environment with `jupyter lab`. Update or remove the environment with:
 
 ```bash
-conda env update --name rnamining-py314 --file environment.yml --prune
-conda env remove --name rnamining-py314
+conda env update --name rnamining --file environment.yml --prune
+conda env remove --name rnamining
 ```
 
-## CLI workflows
+## Group ingestion
+
+The established group workflow prepares the complete S5 dataset. The input ZIP
+must contain one CDS FASTA and one ncRNA FASTA for every organism listed in
+`rnamining.data_preparation.SPECIES`. Gzip-compressed FASTA members are
+supported.
 
 ```bash
 rnamining prepare-data --input S5_File.zip --output data/
-rnamining train --data data/processed/train_test_split --output models/coding_prediction/
-rnamining predict --input sequences.fa --organism Homo_sapiens --output outputs/example/
 ```
 
-Prepare and train one additional species with the same data and model formats:
+Preparation validates that every approved species pair is present, balances
+each species to its smaller class, creates deterministic 80/20 training and
+test splits, and writes evaluation FASTAs and a statistics report. Train one
+model for every prepared species with:
+
+```bash
+rnamining train --data data/processed/train_test_split --output models/coding_prediction/
+```
+
+## Single-species ingestion
+
+The controlled single-species workflow accepts a ZIP containing exactly two
+gzip-compressed FASTA files at the ZIP root, with no additional files:
+
+```text
+<species>.<assembly>.cds.all.fa.gz
+<species>.<assembly>.ncrna.fa.gz
+```
+
+Both filenames must use the same species and assembly. The species must already
+be approved in `rnamining.data_preparation.SPECIES`; adding a new entry requires
+a reviewed repository change as described in the
+[data preparation guide](docs/data-preparation.md#approve-a-new-species).
+
+Prepare only that species:
 
 ```bash
 rnamining prepare-species \
   --input Anolis_carolinensis.zip \
   --output data/
+```
+
+Then train only its model:
+
+```bash
 rnamining train-species \
   --data data/processed/train_test_split \
   --species Anolis_carolinensis \
   --output models/coding_prediction/
 ```
 
-Both single-species commands accept only organisms approved in
-`rnamining.data_preparation.SPECIES`. See the
-[data preparation guide](docs/data-preparation.md#approve-a-new-species) before
-adding another organism.
+Both workflows use the same data layout and write models to
+`models/coding_prediction/<species>.pkl`.
+
+## Prediction
+
+Run prediction with the model for an already trained species:
+
+```bash
+rnamining predict \
+  --input sequences.fa \
+  --organism Homo_sapiens \
+  --output outputs/example/
+```
 
 See [architecture](docs/architecture.md), [data preparation](docs/data-preparation.md), [model training](docs/model-training.md), and [model evaluation](docs/model-evaluation.md) for details.
 
