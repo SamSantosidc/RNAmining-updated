@@ -1,10 +1,85 @@
 """The installed ``rnamining`` command."""
 
 import argparse
+import pickle
+from pathlib import Path
 
-from .data_preparation import prepare_data, prepare_single_species
+from .data_preparation import SPECIES, prepare_data, prepare_single_species
+from .evaluation import evaluate_model, export_results, summarize_metrics
+from .fasta import read_fasta
+from .features import feature_matrix
 from .inference import predict_file
 from .training import train_models, train_single_species
+
+
+def _ground_truth(records):
+    labels = []
+    for record in records:
+        tokens = record.header.lower().split()
+        coding = "class:coding" in tokens or "cds" in tokens
+        noncoding = "class:noncoding" in tokens or "ncrna" in tokens
+        if coding == noncoding:
+            raise ValueError(f"Missing or ambiguous class in FASTA header: {record.header!r}")
+        labels.append(1 if coding else 0)
+    return labels
+
+
+def _evaluate_species_models(models_dir, tests_dir, output_dir, *, seed, repetition):
+    models = Path(models_dir)
+    tests = Path(tests_dir)
+    missing = []
+    for species in SPECIES:
+        for path in (
+            models / f"{species}.pkl",
+            tests / f"{species}_test.fa",
+        ):
+            if not path.is_file():
+                missing.append(str(path))
+    if missing:
+        raise FileNotFoundError("Missing evaluation file(s): " + ", ".join(missing))
+
+    rows = []
+    for species in SPECIES:
+        records = read_fasta(tests / f"{species}_test.fa")
+        truth = _ground_truth(records)
+        with (models / f"{species}.pkl").open("rb") as handle:
+            model = pickle.load(handle)
+        metrics = evaluate_model(model, feature_matrix(records), truth)
+        rows.append({
+            "experiment": "current_species_models",
+            "model_scope": "species_specific",
+            "test_species": species,
+            "seed": seed,
+            "repetition": repetition,
+            "n_test": len(truth),
+            "n_test_coding": truth.count(1),
+            "n_test_noncoding": truth.count(0),
+            **metrics,
+        })
+
+    output = Path(output_dir)
+    result_path = export_results(rows, output / "metrics_current_models.csv")
+    summary = {
+        "experiment": "current_species_models",
+        "model_scope": "species_specific",
+        "n_models": len(rows),
+        **summarize_metrics(rows),
+    }
+    summary_path = export_results(
+        [summary], output / "metrics_current_models_summary.csv"
+    )
+
+    metric_names = ("accuracy", "precision", "recall", "f1", "mcc", "auroc", "auprc")
+    print("species\t" + "\t".join(metric_names))
+    for row in rows:
+        values = [
+            "unavailable" if row[name] is None else f"{row[name]:.6f}"
+            for name in metric_names
+        ]
+        print(row["test_species"] + "\t" + "\t".join(values))
+    print(f"Results: {result_path}")
+    print(f"Summary: {summary_path}")
+    return result_path, summary_path
 
 
 def build_parser():
@@ -41,6 +116,16 @@ def build_parser():
     predict.add_argument("--output", required=True)
     predict.add_argument("--models", default=None, help=argparse.SUPPRESS)
 
+    evaluate = commands.add_parser(
+        "evaluate",
+        help="evaluate the current species-specific models",
+    )
+    evaluate.add_argument("--models", default="models/coding_prediction")
+    evaluate.add_argument("--tests", default="data/evaluation")
+    evaluate.add_argument("--output", required=True)
+    evaluate.add_argument("--seed", type=int, default=42)
+    evaluate.add_argument("--repetition", type=int, default=1)
+
     return parser
 
 
@@ -62,6 +147,15 @@ def main(argv=None):
 
     elif args.command == "predict":
         predict_file(args.input, args.organism, args.output, model_dir=args.models)
+
+    elif args.command == "evaluate":
+        _evaluate_species_models(
+            args.models,
+            args.tests,
+            args.output,
+            seed=args.seed,
+            repetition=args.repetition,
+        )
 
     return 0
 
