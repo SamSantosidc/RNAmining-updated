@@ -13,14 +13,7 @@ from pathlib import Path
 from typing import Iterable, Optional
 
 from .fasta import FastaRecord, read_fasta, write_fasta
-
-SPECIES = (
-    "Anolis_carolinensis", "Chrysemys_picta_bellii", "Crocodylus_porosus",
-    "Danio_rerio", "Eptatretus_burgeri", "Gallus_gallus", "Homo_sapiens",
-    "Latimeria_chalumnae", "Monodelphis_domestica", "Mus_musculus",
-    "Notechis_scutatus", "Ornithorhynchus_anatinus", "Petromyzon_marinus",
-    "Rattus_norvegicus", "Sphenodon_punctatus", "Xenopus_tropicalis",
-)
+from .metadata import SPECIES, get_species_metadata
 
 DEGENERATE_BASES = tuple("RYSWKMBDHVN")
 SINGLE_SPECIES_CODING_SUFFIX = ".cds.all.fa.gz"
@@ -136,6 +129,13 @@ def dataset_statistics(files: dict[str, dict[str, Path]]) -> list[dict]:
     rows = []
     for species in sorted(files):
         pair = files[species]
+        metadata = None
+        try:
+            metadata = get_species_metadata(species)
+        except ValueError:
+            # Custom expected_species values remain supported by the low-level
+            # preparation helper and are intentionally unclassified.
+            pass
 
         for kind in ("cds", "ncrna"):
             path = pair.get(kind)
@@ -149,6 +149,11 @@ def dataset_statistics(files: dict[str, dict[str, Path]]) -> list[dict]:
             )
             rows.append({
                 "species": species,
+                "scientific_name": metadata.scientific_name if metadata else None,
+                "evolutionary_group": metadata.evolutionary_group if metadata else None,
+                "evolutionary_distance_group": (
+                    metadata.evolutionary_distance_group if metadata else None
+                ),
                 "seq_type": kind,
                 "has_cds": "cds" in pair,
                 "has_ncrna": "ncrna" in pair,
@@ -162,6 +167,38 @@ def dataset_statistics(files: dict[str, dict[str, Path]]) -> list[dict]:
             })
 
     return rows
+
+
+def metadata_group_statistics(files: dict[str, dict[str, Path]]) -> dict[str, list[dict]]:
+    """Aggregate sample and class counts for both evolutionary groupings."""
+    totals = {
+        "evolutionary_group": {},
+        "evolutionary_distance_group": {},
+    }
+    for species, pair in files.items():
+        try:
+            metadata = get_species_metadata(species)
+        except ValueError:
+            continue
+
+        counts = {
+            "coding": len(read_fasta(pair["cds"])) if "cds" in pair else 0,
+            "noncoding": len(read_fasta(pair["ncrna"])) if "ncrna" in pair else 0,
+        }
+        for field in totals:
+            key = getattr(metadata, field)
+            row = totals[field].setdefault(
+                key,
+                {field: key, "n_samples": 0, "n_coding": 0, "n_noncoding": 0},
+            )
+            row["n_coding"] += counts["coding"]
+            row["n_noncoding"] += counts["noncoding"]
+            row["n_samples"] += sum(counts.values())
+
+    return {
+        field: [rows[key] for key in sorted(rows)]
+        for field, rows in totals.items()
+    }
 
 
 def _write_species_splits(
@@ -205,6 +242,17 @@ def _write_statistics_report(files: dict[str, dict[str, Path]], report_path: Pat
         writer = csv.DictWriter(report, fieldnames=rows[0].keys())
         writer.writeheader()
         writer.writerows(rows)
+
+
+def _write_metadata_reports(files: dict[str, dict[str, Path]], reports: Path) -> None:
+    for field, rows in metadata_group_statistics(files).items():
+        if not rows:
+            continue
+        path = reports / f"{field}_stats.csv"
+        with path.open("w", newline="", encoding="utf-8") as report:
+            writer = csv.DictWriter(report, fieldnames=rows[0].keys())
+            writer.writeheader()
+            writer.writerows(rows)
 
 
 def prepare_single_species(
@@ -261,6 +309,7 @@ def prepare_single_species(
         complete_files,
         reports / "organism_sequences_stats.csv",
     )
+    _write_metadata_reports(complete_files, reports)
     return species
 
 
@@ -314,6 +363,10 @@ def prepare_data(
     _write_statistics_report(
         {species: files[species] for species in expected},
         report_path,
+    )
+    _write_metadata_reports(
+        {species: files[species] for species in expected},
+        reports,
     )
 
     rng = random.Random(seed)

@@ -112,3 +112,5 @@ Prediction produces `predictions.txt`, `codings.txt`, `noncodings.txt`, and
 
 For implementation and workflow details, see [Data preparation](data-preparation.md),
 [Model training](model-training.md), and [Model evaluation](model-evaluation.md).
+See the [CLI reference](cli-reference.md) for every command, argument, default,
+and generated file.
