@@ -8,6 +8,25 @@ Each organism pair is balanced and converted to the original 64 trinucleotide fe
 
 The 16 current pickle files in `models/coding_prediction/` are versioned model artifacts. Retraining overwrites them only when explicitly requested.
 
+## Train the generalist model
+
+The generalist workflow trains one model from the combined raw FASTA files of
+the supported species. It performs an 80/20 class-stratified split and must be
+run once per seed:
+
+```bash
+rnamining random-split \
+  --data data/ \
+  --models models/random_split/ \
+  --output outputs/evaluation/random_split_42/ \
+  --seed 42
+```
+
+This produces `models/random_split/random_split_seed_42.pkl`. Its scaler is
+stored with the model artifact. Metrics and the held-out test FASTA are stored
+under `outputs/evaluation/random_split_42/`; metric calculation is provided by
+the shared `rnamining.evaluation` module.
+
 ## Train one species
 
 To train only one prepared species, select it explicitly:

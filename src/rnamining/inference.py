@@ -27,9 +27,20 @@ def predict_file(input_path, organism, output_dir, *, model_dir=None, prediction
         raise FileNotFoundError(f"No model found for organism {organism!r}: {model_path}")
     
     with model_path.open("rb") as handle:
-        model = pickle.load(handle)
+        artifact = pickle.load(handle)
+
+    # New experiment artifacts contain the fitted preprocessing step together
+    # with the model. Historical organism models remain plain estimators.
+    if isinstance(artifact, dict) and "model" in artifact:
+        model = artifact["model"]
+        scaler = artifact.get("scaler")
+    else:
+        model = artifact
+        scaler = None
 
     matrix = feature_matrix(records)
+    if scaler is not None:
+        matrix = scaler.transform(matrix)
     predictions = model.predict(matrix)
     probabilities = model.predict_proba(matrix)
 

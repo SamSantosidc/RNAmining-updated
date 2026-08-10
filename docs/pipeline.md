@@ -42,6 +42,26 @@ rnamining train \
   --output models/coding_prediction/
 ```
 
+## Generalist model
+
+To train one generalist model using a global, class-stratified split across
+the raw FASTAs of all supported species, run one seed at a time:
+
+```bash
+rnamining random-split \
+  --data data/ \
+  --models models/random_split/ \
+  --output outputs/evaluation/random_split_42/ \
+  --seed 42
+```
+
+The model is written to
+`models/random_split/random_split_seed_42.pkl`. Metrics, the split
+distribution, configuration, and the held-out FASTA are written under
+`outputs/evaluation/random_split_42/`. Use a different evaluation directory
+and `--seed` value for another run; the CLI does not accept multiple seeds in a
+single invocation.
+
 ## Single-species pipeline
 
 The input ZIP must contain exactly two gzip-compressed FASTA files at its root:
