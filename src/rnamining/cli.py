@@ -9,7 +9,7 @@ from .evaluation import evaluate_model, export_results, summarize_metrics
 from .fasta import read_fasta
 from .features import feature_matrix
 from .inference import predict_file
-from .metadata import get_species_metadata, select_species
+from .random_split import run_random_split
 from .training import train_models, train_single_species
 
 
@@ -140,6 +140,16 @@ def build_parser():
     train_species.add_argument("--species", required=True)
     train_species.add_argument("--output", required=True)
 
+    random_split = commands.add_parser(
+        "random-split",
+        help="train and evaluate a generalist model with a stratified random split",
+    )
+    random_split.add_argument("--data", required=True)
+    random_split.add_argument("--output", required=True)
+    random_split.add_argument("--models", default="models/random_split")
+    random_split.add_argument("--seed", type=int, default=42)
+    random_split.add_argument("--test-size", type=float, default=0.2)
+
     predict = commands.add_parser("predict", help="predict RNA coding potential")
     predict.add_argument("--input", required=True)
     predict.add_argument("--organism", required=True)
@@ -177,6 +187,10 @@ def main(argv=None):
 
     elif args.command == "train-species":
         train_single_species(args.data, args.species, args.output)
+
+    elif args.command == "random-split":
+        run_random_split(args.data, args.output, model_dir=args.models,
+                         seeds=(args.seed,), test_size=args.test_size)
 
     elif args.command == "predict":
         predict_file(args.input, args.organism, args.output, model_dir=args.models)

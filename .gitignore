@@ -7,11 +7,10 @@ __pycache__/
 .pytest_cache/
 
 # S5 is a local scientific input; generated preparation products are reproducible.
-data
-data/raw/
-data/processed/
-data/evaluation/
-data/reports/
+data/evaluation
+data/processed
+data/raw
+data/reports
 S5_File.zip
 
 # Temporary web jobs and evaluation runs are never source artifacts.

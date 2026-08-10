@@ -68,6 +68,43 @@ def read_fasta(path: PathLike, *, validate: bool = True) -> list[FastaRecord]:
     return records
 
 
+def iter_fasta(path: PathLike, *, validate: bool = True) -> Iterator[FastaRecord]:
+    """Yield FASTA records without loading the complete file into memory."""
+    header = None
+    sequence: list[str] = []
+    saw_content = False
+
+    with Path(path).open("r", encoding="utf-8") as handle:
+        for raw_line in handle:
+            line = raw_line.strip()
+            if not line:
+                continue
+            saw_content = True
+            if line.startswith(">"):
+                if header is not None:
+                    record = FastaRecord(header, "".join(sequence))
+                    if validate and not record.sequence:
+                        raise FastaError("Every FASTA header must be followed by a sequence.")
+                    yield record
+                header = line[1:]
+                sequence = []
+            elif header is None:
+                if validate:
+                    raise FastaError("Sequence data appears before the first FASTA header.")
+            else:
+                sequence.append(line)
+
+    if validate and (not saw_content or header is None):
+        raise FastaError(
+            "The inserted file does not match FASTA format: check its headers and sequences."
+        )
+    if header is not None:
+        record = FastaRecord(header, "".join(sequence))
+        if validate and not record.sequence:
+            raise FastaError("Every FASTA header must be followed by a sequence.")
+        yield record
+
+
 
 def write_fasta(records: Iterable[FastaRecord], path: PathLike) -> Path:
     path = Path(path)

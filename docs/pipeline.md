@@ -42,14 +42,25 @@ rnamining train \
   --output models/coding_prediction/
 ```
 
-Evaluate all trained species models against the held-out FASTAs:
+## Generalist model
+
+To train one generalist model using a global, class-stratified split across
+the raw FASTAs of all supported species, run one seed at a time:
 
 ```bash
-rnamining evaluate --output outputs/evaluation/current_models
+rnamining random-split \
+  --data data/ \
+  --models models/random_split/ \
+  --output outputs/evaluation/random_split_42/ \
+  --seed 42
 ```
 
-This writes detailed per-species metrics and a mean/sample-standard-deviation
-summary. See [Model evaluation](model-evaluation.md) for metric definitions.
+The model is written to
+`models/random_split/random_split_seed_42.pkl`. Metrics, the split
+distribution, configuration, and the held-out FASTA are written under
+`outputs/evaluation/random_split_42/`. Use a different evaluation directory
+and `--seed` value for another run; the CLI does not accept multiple seeds in a
+single invocation.
 
 ## Single-species pipeline
 
