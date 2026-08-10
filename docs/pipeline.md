@@ -42,6 +42,15 @@ rnamining train \
   --output models/coding_prediction/
 ```
 
+Evaluate all trained species models against the held-out FASTAs:
+
+```bash
+rnamining evaluate --output outputs/evaluation/current_models
+```
+
+This writes detailed per-species metrics and a mean/sample-standard-deviation
+summary. See [Model evaluation](model-evaluation.md) for metric definitions.
+
 ## Single-species pipeline
 
 The input ZIP must contain exactly two gzip-compressed FASTA files at its root:
@@ -92,3 +101,5 @@ Prediction produces `predictions.txt`, `codings.txt`, `noncodings.txt`, and
 
 For implementation and workflow details, see [Data preparation](data-preparation.md),
 [Model training](model-training.md), and [Model evaluation](model-evaluation.md).
+See the [CLI reference](cli-reference.md) for every command, argument, default,
+and generated file.

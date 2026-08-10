@@ -5,6 +5,7 @@ import types
 import numpy as np
 import pytest
 
+import rnamining.cli as cli
 from rnamining.cli import main
 from rnamining.data_preparation import SPECIES
 from test_data_preparation import make_s5_zip, make_single_species_zip
@@ -116,3 +117,42 @@ def test_predict_cli(tmp_path):
     output = tmp_path / "result"
     assert main(["predict", "--input", str(source), "--organism", "Test_species", "--output", str(output), "--models", str(models)]) == 0
     assert (output / "predictions.txt").is_file()
+
+
+def test_evaluate_cli_discovers_species_models_and_exports_metrics(tmp_path, monkeypatch):
+    monkeypatch.setattr(cli, "SPECIES", ("Test_species",))
+    models = tmp_path / "models"
+    tests = tmp_path / "evaluation"
+    models.mkdir()
+    tests.mkdir()
+    with (models / "Test_species.pkl").open("wb") as handle:
+        pickle.dump(SmallModel(), handle)
+    (tests / "Test_species_test.fa").write_text(
+        ">coding class:coding\nAAA\n>noncoding class:noncoding\nCCC\n"
+    )
+    output = tmp_path / "results"
+
+    assert main([
+        "evaluate",
+        "--models", str(models),
+        "--tests", str(tests),
+        "--output", str(output),
+    ]) == 0
+
+    results = (output / "metrics_current_models.csv").read_text()
+    assert "species_specific" in results
+    assert "Test_species" in results
+    assert (output / "metrics_current_models_summary.csv").is_file()
+
+
+def test_evaluate_cli_reports_all_missing_inputs(tmp_path, monkeypatch):
+    monkeypatch.setattr(cli, "SPECIES", ("Alpha_beta", "Gamma_delta"))
+
+    with pytest.raises(FileNotFoundError, match="Alpha_beta.pkl") as error:
+        main([
+            "evaluate",
+            "--models", str(tmp_path / "models"),
+            "--tests", str(tmp_path / "tests"),
+            "--output", str(tmp_path / "output"),
+        ])
+    assert "Gamma_delta_test.fa" in str(error.value)
