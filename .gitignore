@@ -7,6 +7,7 @@ __pycache__/
 .pytest_cache/
 
 # S5 is a local scientific input; generated preparation products are reproducible.
+data
 data/raw/*
 !data/raw/.gitkeep
 data/processed/*

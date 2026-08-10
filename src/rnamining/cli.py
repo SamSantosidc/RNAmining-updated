@@ -9,6 +9,7 @@ from .evaluation import evaluate_model, export_results, summarize_metrics
 from .fasta import read_fasta
 from .features import feature_matrix
 from .inference import predict_file
+from .metadata import get_species_metadata, select_species
 from .training import train_models, train_single_species
 
 
@@ -24,14 +25,32 @@ def _ground_truth(records):
     return labels
 
 
-def _evaluate_species_models(models_dir, tests_dir, output_dir, *, seed, repetition):
+def _evaluate_species_models(
+    models_dir,
+    tests_dir,
+    output_dir,
+    *,
+    seed,
+    repetition,
+    species=None,
+    evolutionary_group=None,
+    distance_group=None,
+):
     models = Path(models_dir)
     tests = Path(tests_dir)
+    if species is None and evolutionary_group is None and distance_group is None:
+        selected_species = tuple(SPECIES)
+    else:
+        selected_species = select_species(
+            species,
+            evolutionary_group=evolutionary_group,
+            distance_group=distance_group,
+        )
     missing = []
-    for species in SPECIES:
+    for species_name in selected_species:
         for path in (
-            models / f"{species}.pkl",
-            tests / f"{species}_test.fa",
+            models / f"{species_name}.pkl",
+            tests / f"{species_name}_test.fa",
         ):
             if not path.is_file():
                 missing.append(str(path))
@@ -39,23 +58,34 @@ def _evaluate_species_models(models_dir, tests_dir, output_dir, *, seed, repetit
         raise FileNotFoundError("Missing evaluation file(s): " + ", ".join(missing))
 
     rows = []
-    for species in SPECIES:
-        records = read_fasta(tests / f"{species}_test.fa")
+    for species_name in selected_species:
+        records = read_fasta(tests / f"{species_name}_test.fa")
         truth = _ground_truth(records)
-        with (models / f"{species}.pkl").open("rb") as handle:
+        with (models / f"{species_name}.pkl").open("rb") as handle:
             model = pickle.load(handle)
         metrics = evaluate_model(model, feature_matrix(records), truth)
-        rows.append({
+        row = {
             "experiment": "current_species_models",
             "model_scope": "species_specific",
-            "test_species": species,
+            "test_species": species_name,
             "seed": seed,
             "repetition": repetition,
             "n_test": len(truth),
             "n_test_coding": truth.count(1),
             "n_test_noncoding": truth.count(0),
             **metrics,
+        }
+        try:
+            metadata = get_species_metadata(species_name)
+        except ValueError:
+            metadata = None
+        row.update({
+            "evolutionary_group": metadata.evolutionary_group if metadata else None,
+            "evolutionary_distance_group": (
+                metadata.evolutionary_distance_group if metadata else None
+            ),
         })
+        rows.append(row)
 
     output = Path(output_dir)
     result_path = export_results(rows, output / "metrics_current_models.csv")
@@ -125,6 +155,9 @@ def build_parser():
     evaluate.add_argument("--output", required=True)
     evaluate.add_argument("--seed", type=int, default=42)
     evaluate.add_argument("--repetition", type=int, default=1)
+    evaluate.add_argument("--species", action="append", default=None)
+    evaluate.add_argument("--evolutionary-group", default=None)
+    evaluate.add_argument("--distance-group", default=None)
 
     return parser
 
@@ -155,6 +188,9 @@ def main(argv=None):
             args.output,
             seed=args.seed,
             repetition=args.repetition,
+            species=args.species,
+            evolutionary_group=args.evolutionary_group,
+            distance_group=args.distance_group,
         )
 
     return 0

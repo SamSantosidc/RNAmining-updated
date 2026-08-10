@@ -45,6 +45,9 @@ rnamining evaluate --output outputs/evaluation/current_models
 | `--output` | Yes | — | Directory for the metrics CSV files. |
 | `--seed` | No | `42` | Seed recorded as execution metadata; evaluation itself is deterministic. |
 | `--repetition` | No | `1` | Repetition number recorded as execution metadata. |
+| `--species` | No | all | Repeatable canonical species filter. |
+| `--evolutionary-group` | No | all | Filter by one detailed evolutionary group. |
+| `--distance-group` | No | all | Filter by evolutionary distance group `A`–`E`. |
 
 The command requires a model and test FASTA for every species in
 `rnamining.data_preparation.SPECIES`. It displays the metrics and writes:
@@ -55,8 +58,9 @@ metrics_current_models_summary.csv
 ```
 
 The detailed CSV contains Accuracy, Precision, Recall, F1, MCC, AUROC, AUPRC,
-TN, FP, FN, TP, score type, test counts, species, seed, and repetition. The
-summary contains the mean and sample standard deviation across models.
+TN, FP, FN, TP, score type, test counts, species, evolutionary group, distance
+group, seed, and repetition. The summary contains the mean and sample standard
+deviation across models.
 
 ## `prepare-data`
 
@@ -76,6 +80,10 @@ rnamining prepare-data \
 The command validates the species pairs, balances both classes, performs the
 deterministic 80/20 split, and creates `raw/`, `processed/train_test_split/`,
 `evaluation/`, and `reports/organism_sequences_stats.csv` below the output.
+The report includes the canonical scientific name and both evolutionary
+metadata fields. Two additional reports aggregate sample counts and
+`coding`/`noncoding` classes by `evolutionary_group` and
+`evolutionary_distance_group`.
 
 ## `prepare-species`
 

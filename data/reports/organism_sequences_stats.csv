@@ -1,33 +1,33 @@
-species,seq_type,has_cds,has_ncrna,file_name,n_sequences,min_len,max_len,mean_len,median_len,R,Y,S,W,K,M,B,D,H,V,N
-Anolis_carolinensis,cds,True,True,Anolis_carolinensis.cds.fa,32972,51,21030,2023.177059323062,1518.0,0,0,0,0,0,0,0,0,0,0,22498
-Anolis_carolinensis,ncrna,True,True,Anolis_carolinensis.ncrna.fa,4759,55,9669,1604.7476360579954,1305,0,1,0,0,0,0,0,0,0,0,2594
-Chrysemys_picta_bellii,cds,True,True,Chrysemys_picta_bellii.cds.fa,39084,57,24105,1934.7479531265992,1404.0,0,0,0,0,0,0,0,0,0,0,21991
-Chrysemys_picta_bellii,ncrna,True,True,Chrysemys_picta_bellii.ncrna.fa,7038,40,6284,709.3716965046889,498.5,0,0,0,0,0,0,0,0,0,0,3527
-Crocodylus_porosus,cds,True,True,Crocodylus_porosus.cds.fa,27731,114,18873,2049.7663264938155,1521,0,0,0,0,0,0,0,0,0,0,62754
-Crocodylus_porosus,ncrna,True,True,Crocodylus_porosus.ncrna.fa,4618,35,10601,566.9623213512343,350.0,0,0,0,0,0,0,0,0,0,0,6693
-Danio_rerio,cds,True,True,Danio_rerio.cds.fa,52089,3,87459,1546.523162279944,1110,0,0,0,0,0,0,0,0,0,0,7712
-Danio_rerio,ncrna,True,True,Danio_rerio.ncrna.fa,8115,34,13525,645.1625385089341,398,0,0,0,0,0,0,0,0,0,0,4102
-Eptatretus_burgeri,cds,True,True,Eptatretus_burgeri.cds.fa,27960,150,13806,1510.3979971387696,1191.0,0,0,0,0,0,0,0,0,0,0,3441
-Eptatretus_burgeri,ncrna,True,True,Eptatretus_burgeri.ncrna.fa,1089,41,8965,1517.5977961432507,1202,0,0,0,0,0,0,0,0,0,0,11
-Gallus_gallus,cds,True,True,Gallus_gallus.cds.fa,44876,42,105123,1927.7040065959534,1410.0,0,0,0,0,0,0,0,0,0,0,223
-Gallus_gallus,ncrna,True,True,Gallus_gallus.ncrna.fa,27752,45,78008,2417.540897953301,1431.0,0,0,0,0,0,0,0,0,0,0,0
-Homo_sapiens,cds,True,True,Homo_sapiens.cds.fa,245535,3,107976,1430.552520007331,1119,0,0,0,0,0,0,0,0,0,0,111553
-Homo_sapiens,ncrna,True,True,Homo_sapiens.ncrna.fa,203749,5,347561,989.2446097894959,791,0,0,0,0,0,0,0,0,0,0,3
-Latimeria_chalumnae,cds,True,True,Latimeria_chalumnae.cds.fa,23601,45,65541,1554.9034786661582,1185,0,0,0,0,0,0,0,0,0,0,930
-Latimeria_chalumnae,ncrna,True,True,Latimeria_chalumnae.ncrna.fa,2918,41,1665,115.88313913639479,116.0,0,0,0,0,0,0,0,0,0,0,5
-Monodelphis_domestica,cds,True,True,Monodelphis_domestica.cds.fa,36557,51,25044,1854.2100828842629,1374,0,0,0,0,0,0,0,0,0,0,35656
-Monodelphis_domestica,ncrna,True,True,Monodelphis_domestica.ncrna.fa,21460,44,9435,856.4122553588071,750.0,0,0,0,0,0,0,0,0,0,0,3768
-Mus_musculus,cds,True,True,Mus_musculus.cds.fa,66668,3,106173,1276.4020969580608,906.0,0,0,0,0,0,0,0,0,0,0,6334
-Mus_musculus,ncrna,True,True,Mus_musculus.ncrna.fa,158776,35,93092,867.1052552022976,730.0,0,0,0,0,0,0,0,0,0,0,0
-Notechis_scutatus,cds,True,True,Notechis_scutatus.cds.fa,29097,117,24141,1605.7792212255558,1212,0,0,0,0,0,0,0,0,0,0,5288
-Notechis_scutatus,ncrna,True,True,Notechis_scutatus.ncrna.fa,1691,35,4595,475.6262566528681,260,0,0,0,0,0,0,0,0,0,0,819
-Ornithorhynchus_anatinus,cds,True,True,Ornithorhynchus_anatinus.cds.fa,32939,69,24735,2046.9273809162391,1512,0,0,0,0,0,0,0,0,0,0,684
-Ornithorhynchus_anatinus,ncrna,True,True,Ornithorhynchus_anatinus.ncrna.fa,9746,50,16257,460.5344756823312,138.0,0,0,0,0,0,0,0,0,0,0,96
-Petromyzon_marinus,cds,True,True,Petromyzon_marinus.cds.fa,11442,36,56703,1209.2567732913826,900.0,0,0,0,0,0,0,0,0,0,0,163
-Petromyzon_marinus,ncrna,True,True,Petromyzon_marinus.ncrna.fa,2652,35,1621,121.79675716440423,119.0,0,0,0,0,0,0,0,0,0,0,11
-Rattus_norvegicus,cds,True,True,Rattus_norvegicus.cds.fa,51575,18,101403,1827.9784391662627,1344,0,0,0,0,0,0,0,0,0,0,0
-Rattus_norvegicus,ncrna,True,True,Rattus_norvegicus.ncrna.fa,43450,48,82267,1899.910655926352,1103.0,0,0,0,0,0,0,0,0,0,0,0
-Sphenodon_punctatus,cds,True,True,Sphenodon_punctatus.cds.fa,25260,48,20019,1489.3281868566903,1149.0,0,0,0,0,0,0,0,0,0,0,5189
-Sphenodon_punctatus,ncrna,True,True,Sphenodon_punctatus.ncrna.fa,910,35,372,136.44285714285715,127.0,0,0,0,0,0,0,0,0,0,0,1
-Xenopus_tropicalis,cds,True,True,Xenopus_tropicalis.cds.fa,49792,60,32514,1893.4557760282776,1419.0,0,0,0,0,0,0,0,0,0,0,0
-Xenopus_tropicalis,ncrna,True,True,Xenopus_tropicalis.ncrna.fa,2023,55,5035,171.07068709836875,119,0,0,0,0,0,0,0,0,0,0,0
+species,scientific_name,evolutionary_group,evolutionary_distance_group,seq_type,has_cds,has_ncrna,file_name,n_sequences,min_len,max_len,mean_len,median_len,R,Y,S,W,K,M,B,D,H,V,N
+Anolis_carolinensis,Anolis carolinensis,Répteis — Lepidosauria,B,cds,True,True,Anolis_carolinensis.cds.fa,32972,51,21030,2023.177059323062,1518.0,0,0,0,0,0,0,0,0,0,0,22498
+Anolis_carolinensis,Anolis carolinensis,Répteis — Lepidosauria,B,ncrna,True,True,Anolis_carolinensis.ncrna.fa,4759,55,9669,1604.7476360579954,1305,0,1,0,0,0,0,0,0,0,0,2594
+Chrysemys_picta_bellii,Chrysemys picta bellii,Quelônios,B,cds,True,True,Chrysemys_picta_bellii.cds.fa,39084,57,24105,1934.7479531265992,1404.0,0,0,0,0,0,0,0,0,0,0,21991
+Chrysemys_picta_bellii,Chrysemys picta bellii,Quelônios,B,ncrna,True,True,Chrysemys_picta_bellii.ncrna.fa,7038,40,6284,709.3716965046889,498.5,0,0,0,0,0,0,0,0,0,0,3527
+Crocodylus_porosus,Crocodylus porosus,Répteis — Archosauria,B,cds,True,True,Crocodylus_porosus.cds.fa,27731,114,18873,2049.7663264938155,1521,0,0,0,0,0,0,0,0,0,0,62754
+Crocodylus_porosus,Crocodylus porosus,Répteis — Archosauria,B,ncrna,True,True,Crocodylus_porosus.ncrna.fa,4618,35,10601,566.9623213512343,350.0,0,0,0,0,0,0,0,0,0,0,6693
+Danio_rerio,Danio rerio,Peixes ósseos — Teleostei,D,cds,True,True,Danio_rerio.cds.fa,52089,3,87459,1546.523162279944,1110,0,0,0,0,0,0,0,0,0,0,7712
+Danio_rerio,Danio rerio,Peixes ósseos — Teleostei,D,ncrna,True,True,Danio_rerio.ncrna.fa,8115,34,13525,645.1625385089341,398,0,0,0,0,0,0,0,0,0,0,4102
+Eptatretus_burgeri,Eptatretus burgeri,Ciclóstomos — Agnatha,E,cds,True,True,Eptatretus_burgeri.cds.fa,27960,150,13806,1510.3979971387696,1191.0,0,0,0,0,0,0,0,0,0,0,3441
+Eptatretus_burgeri,Eptatretus burgeri,Ciclóstomos — Agnatha,E,ncrna,True,True,Eptatretus_burgeri.ncrna.fa,1089,41,8965,1517.5977961432507,1202,0,0,0,0,0,0,0,0,0,0,11
+Gallus_gallus,Gallus gallus,Aves,B,cds,True,True,Gallus_gallus.cds.fa,44876,42,105123,1927.7040065959534,1410.0,0,0,0,0,0,0,0,0,0,0,223
+Gallus_gallus,Gallus gallus,Aves,B,ncrna,True,True,Gallus_gallus.ncrna.fa,27752,45,78008,2417.540897953301,1431.0,0,0,0,0,0,0,0,0,0,0,0
+Homo_sapiens,Homo sapiens,Mamíferos placentários — Eutheria,A,cds,True,True,Homo_sapiens.cds.fa,245535,3,107976,1430.552520007331,1119,0,0,0,0,0,0,0,0,0,0,111553
+Homo_sapiens,Homo sapiens,Mamíferos placentários — Eutheria,A,ncrna,True,True,Homo_sapiens.ncrna.fa,203749,5,347561,989.2446097894959,791,0,0,0,0,0,0,0,0,0,0,3
+Latimeria_chalumnae,Latimeria chalumnae,Peixes de nadadeiras lobadas — Sarcopterygii,D,cds,True,True,Latimeria_chalumnae.cds.fa,23601,45,65541,1554.9034786661582,1185,0,0,0,0,0,0,0,0,0,0,930
+Latimeria_chalumnae,Latimeria chalumnae,Peixes de nadadeiras lobadas — Sarcopterygii,D,ncrna,True,True,Latimeria_chalumnae.ncrna.fa,2918,41,1665,115.88313913639479,116.0,0,0,0,0,0,0,0,0,0,0,5
+Monodelphis_domestica,Monodelphis domestica,Mamífero marsupial,A,cds,True,True,Monodelphis_domestica.cds.fa,36557,51,25044,1854.2100828842629,1374,0,0,0,0,0,0,0,0,0,0,35656
+Monodelphis_domestica,Monodelphis domestica,Mamífero marsupial,A,ncrna,True,True,Monodelphis_domestica.ncrna.fa,21460,44,9435,856.4122553588071,750.0,0,0,0,0,0,0,0,0,0,0,3768
+Mus_musculus,Mus musculus,Mamíferos placentários — Eutheria,A,cds,True,True,Mus_musculus.cds.fa,66668,3,106173,1276.4020969580608,906.0,0,0,0,0,0,0,0,0,0,0,6334
+Mus_musculus,Mus musculus,Mamíferos placentários — Eutheria,A,ncrna,True,True,Mus_musculus.ncrna.fa,158776,35,93092,867.1052552022976,730.0,0,0,0,0,0,0,0,0,0,0,0
+Notechis_scutatus,Notechis scutatus,Répteis — Lepidosauria,B,cds,True,True,Notechis_scutatus.cds.fa,29097,117,24141,1605.7792212255558,1212,0,0,0,0,0,0,0,0,0,0,5288
+Notechis_scutatus,Notechis scutatus,Répteis — Lepidosauria,B,ncrna,True,True,Notechis_scutatus.ncrna.fa,1691,35,4595,475.6262566528681,260,0,0,0,0,0,0,0,0,0,0,819
+Ornithorhynchus_anatinus,Ornithorhynchus anatinus,Mamífero monotremado,A,cds,True,True,Ornithorhynchus_anatinus.cds.fa,32939,69,24735,2046.9273809162391,1512,0,0,0,0,0,0,0,0,0,0,684
+Ornithorhynchus_anatinus,Ornithorhynchus anatinus,Mamífero monotremado,A,ncrna,True,True,Ornithorhynchus_anatinus.ncrna.fa,9746,50,16257,460.5344756823312,138.0,0,0,0,0,0,0,0,0,0,0,96
+Petromyzon_marinus,Petromyzon marinus,Ciclóstomos — Agnatha,E,cds,True,True,Petromyzon_marinus.cds.fa,11442,36,56703,1209.2567732913826,900.0,0,0,0,0,0,0,0,0,0,0,163
+Petromyzon_marinus,Petromyzon marinus,Ciclóstomos — Agnatha,E,ncrna,True,True,Petromyzon_marinus.ncrna.fa,2652,35,1621,121.79675716440423,119.0,0,0,0,0,0,0,0,0,0,0,11
+Rattus_norvegicus,Rattus norvegicus,Mamíferos placentários — Eutheria,A,cds,True,True,Rattus_norvegicus.cds.fa,51575,18,101403,1827.9784391662627,1344,0,0,0,0,0,0,0,0,0,0,0
+Rattus_norvegicus,Rattus norvegicus,Mamíferos placentários — Eutheria,A,ncrna,True,True,Rattus_norvegicus.ncrna.fa,43450,48,82267,1899.910655926352,1103.0,0,0,0,0,0,0,0,0,0,0,0
+Sphenodon_punctatus,Sphenodon punctatus,Répteis — Lepidosauria,B,cds,True,True,Sphenodon_punctatus.cds.fa,25260,48,20019,1489.3281868566903,1149.0,0,0,0,0,0,0,0,0,0,0,5189
+Sphenodon_punctatus,Sphenodon punctatus,Répteis — Lepidosauria,B,ncrna,True,True,Sphenodon_punctatus.ncrna.fa,910,35,372,136.44285714285715,127.0,0,0,0,0,0,0,0,0,0,0,1
+Xenopus_tropicalis,Xenopus tropicalis,Anfíbios,C,cds,True,True,Xenopus_tropicalis.cds.fa,49792,60,32514,1893.4557760282776,1419.0,0,0,0,0,0,0,0,0,0,0,0
+Xenopus_tropicalis,Xenopus tropicalis,Anfíbios,C,ncrna,True,True,Xenopus_tropicalis.ncrna.fa,2023,55,5035,171.07068709836875,119,0,0,0,0,0,0,0,0,0,0,0
