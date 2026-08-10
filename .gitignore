@@ -8,12 +8,10 @@ __pycache__/
 
 # S5 is a local scientific input; generated preparation products are reproducible.
 data
-data/raw/*
-!data/raw/.gitkeep
-data/processed/*
-!data/processed/.gitkeep
-data/evaluation/*
-!data/evaluation/.gitkeep
+data/raw/
+data/processed/
+data/evaluation/
+data/reports/
 S5_File.zip
 
 # Temporary web jobs and evaluation runs are never source artifacts.
