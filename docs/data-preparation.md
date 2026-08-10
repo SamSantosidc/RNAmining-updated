@@ -8,6 +8,30 @@ rnamining prepare-data --input S5_File.zip --output data/
 
 The command extracts canonical organism FASTAs to `data/raw/`, writes descriptive statistics to `data/reports/organism_sequences_stats.csv`, balances each organism to its smaller class, and performs an 80/20 class-wise split with seed 42. Training/test files go to `data/processed/train_test_split/{coding,noncoding}`. Mixed held-out FASTAs go to `data/evaluation/`, with `class:coding` or `class:noncoding` appended to every header as ground truth.
 
+Each supported species is assigned the reusable metadata fields
+`evolutionary_group` and `evolutionary_distance_group`. The preparation step
+also writes `reports/evolutionary_group_stats.csv` and
+`reports/evolutionary_distance_group_stats.csv`, containing total, coding, and
+non-coding sample counts for each group.
+
+## Evolutionary distance groups
+
+The distance-group identifier is a stable code used by filters and experiment
+configuration. Its meaning is defined by the following catalog:
+
+| Group | Classification | Species |
+|---|---|---|
+| A | Mammals | *Homo sapiens*, *Mus musculus*, *Rattus norvegicus*, *Monodelphis domestica*, *Ornithorhynchus anatinus* |
+| B | Sauropsida | *Gallus gallus*, *Crocodylus porosus*, *Chrysemys picta bellii*, *Anolis carolinensis*, *Notechis scutatus*, *Sphenodon punctatus* |
+| C | Amphibians | *Xenopus tropicalis* |
+| D | Fish | *Danio rerio*, *Latimeria chalumnae* |
+| E | Basal vertebrates | *Petromyzon marinus*, *Eptatretus burgeri* |
+
+The textual classification is also available from
+`rnamining.metadata.DISTANCE_GROUP_CLASSIFICATIONS`. Code should use the
+stable A-E identifiers while user-facing reports and documentation should show
+the corresponding classification.
+
 ## Prepare one species
 
 To add one species without changing the established S5 workflow, provide a ZIP

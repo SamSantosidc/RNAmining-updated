@@ -70,5 +70,18 @@ rnamining evaluate \
 `--seed` and `--repetition` record execution metadata; they do not change model
 predictions. See the [CLI reference](cli-reference.md#evaluate) for all options.
 
+### Distance-group codes
+
+Distance-group filters use the following documented codes:
+
+- `A`: Mammals
+- `B`: Sauropsida
+- `C`: Amphibians
+- `D`: Fish
+- `E`: Basal vertebrates
+
+The complete species membership is defined in the data-preparation guide and
+in the central `rnamining.metadata` catalog.
+
 Legacy prediction files remain available through `rnamining predict` and are
 unchanged by the metrics module.
