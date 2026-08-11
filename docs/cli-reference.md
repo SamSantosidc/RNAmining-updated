@@ -145,6 +145,36 @@ rnamining train-species \
 
 Only `<output>/<species>.pkl` is created or replaced.
 
+## `loso`
+
+Train one independent model for each held-out species using all raw samples
+from the other species:
+
+```bash
+rnamining loso \
+  --data data/ \
+  --models models/loso/ \
+  --seed 42
+```
+
+The command creates `<species>_loso.pkl` and `config.json` under the models
+directory. The scaler is fitted independently on each fold's 15 training
+species. Folds run sequentially and features are loaded in bounded blocks to
+avoid retaining the complete raw dataset in memory.
+
+Extract metrics from the saved models with:
+
+```bash
+rnamining evaluate-loso \
+  --data data/ \
+  --models models/loso/ \
+  --output outputs/evaluation/loso/ \
+  --seed 42
+```
+
+This writes `metrics_loso.csv`, `metrics_loso_summary.csv`, and
+`distribution.csv` under the output directory.
+
 ## Complete workflows
 
 Inference with an existing model requires only `predict`. To recreate, train,

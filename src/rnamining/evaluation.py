@@ -24,8 +24,10 @@ METRICS = ("accuracy", "precision", "recall", "f1", "mcc", "auroc", "auprc")
 def calculate_metrics(y_true, y_pred, y_score=None) -> dict:
     truth = np.asarray(y_true, dtype=int)
     predicted = np.asarray(y_pred, dtype=int)
+
     if truth.ndim != 1 or predicted.ndim != 1 or not len(truth):
         raise ValueError("y_true and y_pred must be non-empty one-dimensional sequences.")
+    
     if (
         len(truth) != len(predicted)
         or not set(np.unique(truth)).issubset({0, 1})

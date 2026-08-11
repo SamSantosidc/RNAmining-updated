@@ -9,6 +9,9 @@ from .evaluation import evaluate_model, export_results, summarize_metrics
 from .fasta import read_fasta
 from .features import feature_matrix
 from .inference import predict_file
+from .loso import run_loso
+from .loso_evaluation import evaluate_loso
+from .metadata import get_species_metadata, select_species
 from .random_split import run_random_split
 from .training import train_models, train_single_species
 
@@ -150,6 +153,23 @@ def build_parser():
     random_split.add_argument("--seed", type=int, default=42)
     random_split.add_argument("--test-size", type=float, default=0.2)
 
+    loso = commands.add_parser(
+        "loso",
+        help="train one model per held-out species",
+    )
+    loso.add_argument("--data", required=True)
+    loso.add_argument("--models", default="models/loso")
+    loso.add_argument("--seed", type=int, default=42)
+
+    evaluate_loso_parser = commands.add_parser(
+        "evaluate-loso",
+        help="extract metrics from saved LOSO models",
+    )
+    evaluate_loso_parser.add_argument("--data", required=True)
+    evaluate_loso_parser.add_argument("--models", default="models/loso")
+    evaluate_loso_parser.add_argument("--output", required=True)
+    evaluate_loso_parser.add_argument("--seed", type=int, default=42)
+
     predict = commands.add_parser("predict", help="predict RNA coding potential")
     predict.add_argument("--input", required=True)
     predict.add_argument("--organism", required=True)
@@ -191,6 +211,18 @@ def main(argv=None):
     elif args.command == "random-split":
         run_random_split(args.data, args.output, model_dir=args.models,
                          seeds=(args.seed,), test_size=args.test_size)
+
+    elif args.command == "loso":
+        run_loso(args.data, args.models, seed=args.seed)
+
+    elif args.command == "evaluate-loso":
+        evaluate_loso(
+            args.data,
+            args.models,
+            args.output,
+            seed=args.seed,
+            expected_species=SPECIES,
+        )
 
     elif args.command == "predict":
         predict_file(args.input, args.organism, args.output, model_dir=args.models)

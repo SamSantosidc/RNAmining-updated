@@ -104,6 +104,32 @@ example `outputs/evaluation/random_split_123`). The model is saved under
 under its evaluation directory. The workflow delegates metric calculation to
 the shared `rnamining.evaluation` module.
 
+## Leave-One-Species-Out
+
+Run the complete 16-fold species generalization experiment with:
+
+```bash
+rnamining loso \
+  --data data/ \
+  --models models/loso/ \
+  --seed 42
+```
+
+Then extract the metrics:
+
+```bash
+rnamining evaluate-loso \
+  --data data/ \
+  --models models/loso/ \
+  --output outputs/evaluation/loso/ \
+  --seed 42
+```
+
+The detailed per-species results are exported to
+`outputs/evaluation/loso/metrics_loso.csv`, and the mean and sample standard
+deviation are exported to `metrics_loso_summary.csv`. The test species is
+excluded before preprocessing and model fitting in every fold.
+
 ```bash
 rnamining predict \
   --input outputs/evaluation/random_split_42/random_split_seed_42_test.fa \

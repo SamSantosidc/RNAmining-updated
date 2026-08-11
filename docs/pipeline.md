@@ -62,6 +62,30 @@ distribution, configuration, and the held-out FASTA are written under
 and `--seed` value for another run; the CLI does not accept multiple seeds in a
 single invocation.
 
+## Leave-One-Species-Out model
+
+To measure generalization to species absent from training, run one fold for
+each supported species:
+
+```bash
+rnamining loso \
+  --data data/ \
+  --models models/loso/ \
+  --seed 42
+```
+
+The command uses all raw samples from the other species for training, fits a
+new scaler and model for every fold. Models are written to `models/loso/`.
+Extract metrics separately with:
+
+```bash
+rnamining evaluate-loso \
+  --data data/ \
+  --models models/loso/ \
+  --output outputs/evaluation/loso/ \
+  --seed 42
+```
+
 ## Single-species pipeline
 
 The input ZIP must contain exactly two gzip-compressed FASTA files at its root:

@@ -27,6 +27,27 @@ stored with the model artifact. Metrics and the held-out test FASTA are stored
 under `outputs/evaluation/random_split_42/`; metric calculation is provided by
 the shared `rnamining.evaluation` module.
 
+## Train the LOSO models
+
+The Leave-One-Species-Out workflow trains 16 independent models. Each model
+uses all raw samples from 15 species and evaluates all raw samples from the
+remaining species:
+
+```bash
+rnamining loso \
+  --data data/ \
+  --models models/loso/ \
+  --seed 42
+```
+
+Models are saved as `models/loso/<species>_loso.pkl`; each artifact includes
+its model, its fold-specific scaler, and the held-out species metadata. Metric
+extraction is a separate `evaluate-loso` command.
+
+Folds are trained sequentially. Raw FASTA records are converted in bounded
+blocks and released after each saved model, which keeps the peak memory lower
+on WSL installations with limited RAM.
+
 ## Train one species
 
 To train only one prepared species, select it explicitly:

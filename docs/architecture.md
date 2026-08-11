@@ -1,6 +1,6 @@
 # Architecture
 
-RNAmining remains a synchronous PHP-to-Python application. Nginx exposes only `web/public/`; shared PHP fragments live in `web/templates/`. PHP invokes `rnamining.cli` from the mounted `src/` tree and loads organism-specific artifacts from `models/coding_prediction/`. The offline generalist experiment stores its artifacts separately under `models/random_split/`.
+RNAmining remains a synchronous PHP-to-Python application. Nginx exposes only `web/public/`; shared PHP fragments live in `web/templates/`. PHP invokes `rnamining.cli` from the mounted `src/` tree and loads organism-specific artifacts from `models/coding_prediction/`. Offline experiments store their artifacts separately under `models/random_split/` and `models/loso/`.
 
 Local development and the PHP image share the pinned Conda dependencies in `environment.yml`. Docker creates that environment inside the image; local users activate it and use `pip install -e .` to register the package and CLI against the source tree.
 
