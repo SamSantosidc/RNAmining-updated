@@ -25,6 +25,39 @@ def test_prepare_data_cli(tmp_path):
     assert len(list((tmp_path / "data/evaluation").glob("*_test.fa"))) == 16
 
 
+def test_cli_exposes_reproducibility_and_output_options():
+    args = cli.build_parser().parse_args([
+        "prepare-data",
+        "--input", "input.zip",
+        "--output", "data",
+        "--seed", "7",
+        "--train-ratio", "0.75",
+    ])
+    assert args.seed == 7
+    assert args.train_ratio == 0.75
+
+    args = cli.build_parser().parse_args([
+        "predict",
+        "--input", "input.fa",
+        "--organism", "Homo_sapiens",
+        "--output", "output",
+        "--models", "models",
+        "--prediction-type", "custom_prediction",
+    ])
+    assert args.models == "models"
+    assert args.prediction_type == "custom_prediction"
+
+
+def test_cli_rejects_invalid_train_ratio():
+    with pytest.raises(SystemExit):
+        cli.build_parser().parse_args([
+            "prepare-data",
+            "--input", "input.zip",
+            "--output", "data",
+            "--train-ratio", "1.0",
+        ])
+
+
 def test_prepare_single_species_cli(tmp_path):
     archive = tmp_path / "single.zip"
     make_single_species_zip(archive)

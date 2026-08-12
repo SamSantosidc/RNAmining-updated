@@ -1,105 +1,75 @@
-# Pipeline commands
+# Pipeline do modelo
 
-Activate an isolated Python 3.14.6 environment and install RNAmining before
-running the pipeline commands. Development uses the project's pinned Conda
-environment:
+O pipeline treina um classificador XGBoost específico para cada espécie e usa
+esse modelo para estimar o potencial codificante de novas sequências.
 
-```bash
-conda env create --file environment.yml
-conda activate rnamining
-```
+## Preparação
 
-After activating the environment, install the project:
-
-```bash
-python -m pip install -e .
-```
-
-Use `rnamining --help` or `rnamining <command> --help` to inspect the available
-options.
-
-## Complete dataset pipeline
-
-The input ZIP must contain one CDS FASTA and one ncRNA FASTA for every organism
-listed in `rnamining.data_preparation.SPECIES`. Gzip-compressed FASTA files are
-supported.
-
-Prepare the dataset:
+O dataset completo é um ZIP com pares CDS/ncRNA para as 16 espécies catalogadas:
 
 ```bash
 rnamining prepare-data --input S5_File.zip --output data/
 ```
 
-This validates the species pairs, balances each species, creates deterministic
-80/20 training and test splits, and writes evaluation FASTAs and a statistics
-report.
-
-Train one model for every prepared species:
-
-```bash
-rnamining train \
-  --data data/processed/train_test_split \
-  --output models/coding_prediction/
-```
-
-Evaluate all trained species models against the held-out FASTAs:
-
-```bash
-rnamining evaluate --output outputs/evaluation/current_models
-```
-
-This writes detailed per-species metrics and a mean/sample-standard-deviation
-summary. See [Model evaluation](model-evaluation.md) for metric definitions.
-
-## Single-species pipeline
-
-The input ZIP must contain exactly two gzip-compressed FASTA files at its root:
+Para uma espécie aprovada, o ZIP deve conter na raiz:
 
 ```text
 <species>.<assembly>.cds.all.fa.gz
 <species>.<assembly>.ncrna.fa.gz
 ```
 
-Both files must use the same species and assembly. The species must be listed
-in `rnamining.data_preparation.SPECIES`.
-
-Prepare one species:
-
 ```bash
-rnamining prepare-species \
-  --input Anolis_carolinensis.zip \
-  --output data/
+rnamining prepare-species --input Anolis_carolinensis.zip --output data/
 ```
 
-Train its model:
+O menor grupo define o número de amostras por classe. O pipeline balanceia,
+embaralha e divide por classe em treino/teste. O padrão é 80%/20%; `--seed` e
+`--train-ratio` controlam a reprodução.
+
+Saídas principais:
+
+```text
+data/raw/
+data/processed/train_test_split/coding/*_coding_train.fa
+data/processed/train_test_split/noncoding/*_noncoding_train.fa
+data/evaluation/*_test.fa
+data/reports/*.csv
+```
+
+Os FASTAs de avaliação recebem `class:coding` ou `class:noncoding` no header.
+
+## Features
+
+Cada sequência é percorrida em triplets não sobrepostos, no frame zero. São
+contados os 64 trinucleotídeos formados por `A`, `C`, `T` e `G`; triplets com
+bases ambíguas ou inválidas são ignorados. Os contadores são normalizados pelo
+número de bases válidas, produzindo uma matriz de 64 colunas.
+
+## Treinamento
 
 ```bash
-rnamining train-species \
-  --data data/processed/train_test_split \
-  --species Anolis_carolinensis \
+rnamining train --data data/processed/train_test_split \
   --output models/coding_prediction/
 ```
 
-The model is written to
-`models/coding_prediction/Anolis_carolinensis.pkl`. See
-[Data preparation](data-preparation.md#approve-a-new-species) before approving
-a species that is not already supported.
-
-## Prediction
-
-Run a prediction with the model for a trained species:
+Para uma espécie:
 
 ```bash
-rnamining predict \
-  --input sequences.fa \
-  --organism Homo_sapiens \
-  --output outputs/example/
+rnamining train-species --data data/processed/train_test_split \
+  --species Anolis_carolinensis --output models/coding_prediction/
 ```
 
-Prediction produces `predictions.txt`, `codings.txt`, `noncodings.txt`, and
-`edited_file.fasta` in the output directory.
+Os modelos são serializados como pickle em `<species>.pkl`. Arquivos existentes
+com o mesmo nome são substituídos.
 
-For implementation and workflow details, see [Data preparation](data-preparation.md),
-[Model training](model-training.md), and [Model evaluation](model-evaluation.md).
-See the [CLI reference](cli-reference.md) for every command, argument, default,
-and generated file.
+## Predição e avaliação
+
+```bash
+rnamining predict --input sequences.fa \
+  --organism Homo_sapiens --output outputs/prediction/
+rnamining evaluate --output outputs/evaluation/current_models/
+```
+
+A avaliação usa os FASTAs mantidos em `data/evaluation/` e produz accuracy,
+precision, recall, F1, MCC, AUROC, AUPRC e matriz de confusão. É uma avaliação
+intraespécie, não um teste de generalização entre espécies.

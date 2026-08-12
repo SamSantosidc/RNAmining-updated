@@ -13,6 +13,13 @@ from .metadata import get_species_metadata, select_species
 from .training import train_models, train_single_species
 
 
+def _train_ratio(value):
+    ratio = float(value)
+    if not 0 < ratio < 1:
+        raise argparse.ArgumentTypeError("train ratio must be greater than 0 and less than 1")
+    return ratio
+
+
 def _ground_truth(records):
     labels = []
     for record in records:
@@ -120,6 +127,8 @@ def build_parser():
     prepare = commands.add_parser("prepare-data", help="extract and prepare an S5 dataset")
     prepare.add_argument("--input", required=True)
     prepare.add_argument("--output", required=True)
+    prepare.add_argument("--seed", type=int, default=42)
+    prepare.add_argument("--train-ratio", type=_train_ratio, default=0.8)
 
     prepare_species = commands.add_parser(
         "prepare-species",
@@ -127,10 +136,13 @@ def build_parser():
     )
     prepare_species.add_argument("--input", required=True)
     prepare_species.add_argument("--output", required=True)
+    prepare_species.add_argument("--seed", type=int, default=42)
+    prepare_species.add_argument("--train-ratio", type=_train_ratio, default=0.8)
 
     train = commands.add_parser("train", help="train one model per organism")
     train.add_argument("--data", required=True)
     train.add_argument("--output", required=True)
+    train.add_argument("--seed", type=int, default=42)
 
     train_species = commands.add_parser(
         "train-species",
@@ -139,12 +151,18 @@ def build_parser():
     train_species.add_argument("--data", required=True)
     train_species.add_argument("--species", required=True)
     train_species.add_argument("--output", required=True)
+    train_species.add_argument("--seed", type=int, default=42)
 
     predict = commands.add_parser("predict", help="predict RNA coding potential")
     predict.add_argument("--input", required=True)
     predict.add_argument("--organism", required=True)
     predict.add_argument("--output", required=True)
-    predict.add_argument("--models", default=None, help=argparse.SUPPRESS)
+    predict.add_argument(
+        "--models",
+        default=None,
+        help="directory containing <organism>.pkl (default: repository models directory)",
+    )
+    predict.add_argument("--prediction-type", default="coding_prediction")
 
     evaluate = commands.add_parser(
         "evaluate",
@@ -167,19 +185,35 @@ def main(argv=None):
     args = build_parser().parse_args(argv)
     
     if args.command == "prepare-data":
-        prepare_data(args.input, args.output)
+        prepare_data(
+            args.input,
+            args.output,
+            seed=args.seed,
+            train_ratio=args.train_ratio,
+        )
 
     elif args.command == "prepare-species":
-        prepare_single_species(args.input, args.output)
+        prepare_single_species(
+            args.input,
+            args.output,
+            seed=args.seed,
+            train_ratio=args.train_ratio,
+        )
 
     elif args.command == "train":
-        train_models(args.data, args.output)
+        train_models(args.data, args.output, seed=args.seed)
 
     elif args.command == "train-species":
-        train_single_species(args.data, args.species, args.output)
+        train_single_species(args.data, args.species, args.output, seed=args.seed)
 
     elif args.command == "predict":
-        predict_file(args.input, args.organism, args.output, model_dir=args.models)
+        predict_file(
+            args.input,
+            args.organism,
+            args.output,
+            model_dir=args.models,
+            prediction_type=args.prediction_type,
+        )
 
     elif args.command == "evaluate":
         _evaluate_species_models(

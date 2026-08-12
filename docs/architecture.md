@@ -1,9 +1,47 @@
-# Architecture
+# Arquitetura
 
-RNAmining remains a synchronous PHP-to-Python application. Nginx exposes only `web/public/`; shared PHP fragments live in `web/templates/`. PHP invokes `rnamining.cli` from the mounted `src/` tree and loads versioned artifacts from `models/coding_prediction/`.
+RNAmining possui três camadas principais:
 
-Local development and the PHP image share the pinned Conda dependencies in `environment.yml`. Docker creates that environment inside the image; local users activate it and use `pip install -e .` to register the package and CLI against the source tree.
+```text
+FASTA → preparação/features → modelo XGBoost → resultados
+                              ↑
+                    models/<organismo>.pkl
+```
 
-Scientific inputs and products are separated under `data/`. Browser examples are deliberately public under `web/public/examples/`. Web jobs are transient and isolated under `runtime/jobs/<execution-id>/{input,output,logs}`. Notebook and command-line evaluation runs belong under `outputs/evaluation/`. Both generated trees are ignored by Git.
+## Código científico
 
-`compose.local.yaml` publishes port 80. `compose.proxy.yaml` preserves the deployment that connects Nginx to the external `gatewayapps_proxy` network. Both mount only `web/public/` into Nginx.
+- `src/rnamining/fasta.py`: leitura, validação e escrita de FASTA.
+- `src/rnamining/features.py`: frequências dos 64 trinucleotídeos.
+- `src/rnamining/data_preparation.py`: extração, balanceamento e split.
+- `src/rnamining/training.py`: treinamento por espécie.
+- `src/rnamining/inference.py`: carregamento e predição.
+- `src/rnamining/evaluation.py`: métricas e CSVs.
+- `src/rnamining/cli.py`: interface dos fluxos.
+
+Os modelos versionados ficam em `models/coding_prediction/<species>.pkl`.
+Cada espécie possui um modelo próprio; o organismo informado determina o
+arquivo carregado.
+
+## Aplicação web
+
+Nginx expõe apenas `web/public/` e encaminha PHP para PHP-FPM. O fluxo é
+síncrono:
+
+1. `api/upload.php` valida extensão/tamanho e salva o FASTA.
+2. `api/predict.php` valida a espécie e executa `python -m rnamining.cli predict`.
+3. `results.php` lê `predictions.txt`.
+4. `api/download.php` libera somente arquivos de resultado conhecidos.
+
+Cada execução usa `runtime/jobs/<id>/{input,output,logs}`. Não há fila,
+autenticação, expiração ou limpeza automática de jobs.
+
+## Containers e volumes
+
+`compose.local.yaml` publica a aplicação na porta 80. `compose.proxy.yaml`
+usa a rede Docker externa `gatewayapps_proxy`. O container PHP monta o projeto
+em `/opt/rnamining` e o runtime em `/opt/rnamining/runtime`; Nginx recebe
+somente os arquivos públicos em modo somente leitura.
+
+Dados gerados em `data/`, `outputs/` e `runtime/jobs/` não são artefatos de
+código. Para auditoria, preserve commit, comando, parâmetros, entrada e
+checksum do modelo.

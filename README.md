@@ -59,6 +59,47 @@ The CLI supports full-dataset preparation, single-species preparation,
 training, single-species training, prediction, and model evaluation. See the
 [complete CLI reference](docs/cli-reference.md) for every command and option.
 
+## Run the CLI with Docker
+
+Build the standalone CLI image from the repository root:
+
+```bash
+docker build -f docker/cli/Dockerfile -t rnamining:1.0.4 .
+```
+
+The image has the Python environment, RNAmining package, and versioned models
+inside it. The entrypoint is the CLI itself, so a prediction can be run with:
+
+```bash
+docker run --rm \
+  -v "$PWD:/work" \
+  rnamining:1.0.4 predict \
+  --input /work/sequences.fa \
+  --organism Homo_sapiens \
+  --output /work/outputs/prediction
+```
+
+For a local-like experience, use the repository wrapper. It preserves the
+same `rnamining` arguments, mounts the current directory as `/work`, uses the
+current user's UID/GID, and keeps relative paths working:
+
+```bash
+chmod +x bin/rnamining
+bin/rnamining predict \
+  --input tests/fixtures/anolis_regression.fa \
+  --organism Anolis_carolinensis \
+  --output outputs/docker-prediction
+```
+
+The image tag can be changed without editing the wrapper:
+
+```bash
+RNAMINING_DOCKER_IMAGE=rnamining:1.0.4 bin/rnamining --help
+```
+
+Preparation, training, and evaluation use the same image. See the
+[CLI Docker guide](docs/cli-docker.md) for mounts and the project wrapper.
+
 ## Run the web application
 
 Docker provides the web server and all runtime dependencies:
@@ -79,16 +120,12 @@ docker compose -f compose.local.yaml down
 
 ## Documentation
 
-- [Complete CLI reference](docs/cli-reference.md)
-- [Pipeline workflows](docs/pipeline.md)
-- [Data preparation](docs/data-preparation.md)
-- [Model training](docs/model-training.md)
-- [Model evaluation and metrics API](docs/model-evaluation.md)
-- [Web application and Docker deployment](docs/web-application.md)
-- [Architecture](docs/architecture.md)
+- [Arquitetura](docs/architecture.md)
+- [Pipeline do modelo](docs/pipeline.md)
+- [CLI](docs/cli-reference.md)
+- [CLI Docker](docs/cli-docker.md)
+- [Aplicação web](docs/web-application.md)
 - Evaluation reports: [July 18, 2026](docs/metrics_results_18_07_26.md) and
   [July 22, 2026](docs/metrics_results_22_07_26.md)
-- [Modernization plan](docs/MODERNIZATION_PLAN.md)
-- [Changelog](CHANGELOG.md)
 
 Please cite the project using its [Zenodo record](https://zenodo.org/badge/latestdoi/359168403).

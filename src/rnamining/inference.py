@@ -1,5 +1,6 @@
 """Model selection, prediction, and legacy-compatible output files."""
 
+import os
 import pickle
 import zipfile
 from pathlib import Path
@@ -9,6 +10,9 @@ from .features import feature_matrix
 
 
 def default_model_dir() -> Path:
+    configured = os.environ.get("RNAMINING_MODEL_DIR")
+    if configured:
+        return Path(configured)
     return Path(__file__).resolve().parents[2] / "models" / "coding_prediction"
 
 

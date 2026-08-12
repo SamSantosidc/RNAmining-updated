@@ -17,5 +17,5 @@ S5_File.zip
 # Temporary web jobs and evaluation runs are never source artifacts.
 runtime/jobs/*
 !runtime/jobs/.gitkeep
-outputs/evaluation/*
-!outputs/evaluation/.gitkeep
+outputs
+outputs/evaluation
