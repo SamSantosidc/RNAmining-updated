@@ -15,5 +15,3 @@ dependencies:
   - libxgboost=3.3.0=cpu*
   - biopython=1.87
   - pytest=9.0.3
-  - ipykernel=7.3.0
-  - jupyterlab=4.6.2

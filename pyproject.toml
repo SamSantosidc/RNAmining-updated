@@ -19,10 +19,6 @@ dependencies = [
 
 [project.optional-dependencies]
 test = ["pytest==9.0.3"]
-notebooks = [
-  "ipykernel==7.3.0",
-  "jupyterlab==4.6.2",
-]
 
 [project.scripts]
 rnamining = "rnamining.cli:main"
