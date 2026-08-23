@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-image="${RNAMINING_DOCKER_IMAGE:-rnamining:1.0.4}"
+image="${RNAMINING_DOCKER_IMAGE:-rnamining:1.1.0}"
 
 exec docker run --rm \
   --user "$(id -u):$(id -g)" \
   --workdir /work \
   --volume "${PWD}:/work" \
   "$image" \
+  rnamining \
   "$@"

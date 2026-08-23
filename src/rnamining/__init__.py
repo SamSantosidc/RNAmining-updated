@@ -1,5 +1,21 @@
 """RNAmining's data preparation, training, inference, and evaluation interfaces."""
 
+from importlib.metadata import PackageNotFoundError, version
+from pathlib import Path
+import tomllib
+
+
+def _package_version() -> str:
+    """Return the project version, falling back to installed metadata."""
+    pyproject = Path(__file__).resolve().parents[2] / "pyproject.toml"
+    if pyproject.is_file():
+        with pyproject.open("rb") as handle:
+            return tomllib.load(handle)["project"]["version"]
+    try:
+        return version("rnamining")
+    except PackageNotFoundError:
+        return "unknown"
+
 from .evaluation import (
     calculate_metrics,
     evaluate_model,
@@ -30,4 +46,4 @@ __all__ = (
     "validate_species_names",
 )
 
-__version__ = "1.0.4"
+__version__ = _package_version()

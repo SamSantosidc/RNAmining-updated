@@ -48,6 +48,60 @@ def test_cli_exposes_reproducibility_and_output_options():
     assert args.prediction_type == "custom_prediction"
 
 
+def test_pulposeq_compatibility_cli_writes_contract_outputs(tmp_path, monkeypatch):
+    source = tmp_path / "transcripts.fa"
+    source.write_text(
+        ">qry001 transcript description\nAAA\n"
+        ">qry002 another description\nCCC\n"
+    )
+    models = tmp_path / "models"
+    models.mkdir()
+    with (models / "Homo_sapiens.pkl").open("wb") as handle:
+        pickle.dump(SmallModel(), handle)
+    monkeypatch.setenv("RNAMINING_MODEL_DIR", str(models))
+
+    output = tmp_path / "output"
+    assert main([
+        "-f", str(source),
+        "-organism_name", "Homo_sapiens",
+        "-prediction_type", "coding_prediction",
+        "-output_folder", str(output),
+    ]) == 0
+
+    assert {path.name for path in output.glob("*.txt")} >= {
+        "predictions.txt", "codings.txt", "noncodings.txt"
+    }
+    rows = (output / "predictions.txt").read_text().splitlines()
+    assert rows[:5] == [
+        "RNAMining Predictions",
+        "Prediction Type: coding_prediction",
+        "Name of the Organism: Homo_sapiens",
+        "Sequence ID \t Predictions:",
+        "",
+    ]
+    assert rows[5].split("\t") == ["qry001", "coding", "0.9"]
+    assert rows[6].split("\t") == ["qry002", "non-coding", "0.8"]
+    assert (output / "codings.txt").read_text() == ">qry001 transcript description\nAAA\n"
+    assert (output / "noncodings.txt").read_text() == ">qry002 another description\nCCC\n"
+
+
+def test_version_flag_reports_package_version(capsys):
+    with pytest.raises(SystemExit) as error:
+        main(["--version"])
+    assert error.value.code == 0
+    assert capsys.readouterr().out.strip() == "rnamining 1.1.0"
+
+
+def test_legacy_cli_rejects_unsupported_prediction_type(tmp_path):
+    with pytest.raises(ValueError, match="only 'coding_prediction' is supported"):
+        main([
+            "-f", str(tmp_path / "input.fa"),
+            "-organism_name", "Homo_sapiens",
+            "-prediction_type", "other",
+            "-output_folder", str(tmp_path / "output"),
+        ])
+
+
 def test_cli_rejects_invalid_train_ratio():
     with pytest.raises(SystemExit):
         cli.build_parser().parse_args([

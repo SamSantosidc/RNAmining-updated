@@ -17,6 +17,20 @@ Todos os caminhos relativos são resolvidos a partir do diretório atual.
 
 ## Comandos
 
+### Compatibilidade com PULPOSEQ
+
+A interface de predição usada pelo PULPOSEQ é suportada diretamente:
+
+```bash
+rnamining -f sequences.fa \
+  -organism_name Homo_sapiens \
+  -prediction_type coding_prediction \
+  -output_folder outputs/prediction/
+```
+
+Ela gera `predictions.txt`, `codings.txt` e `noncodings.txt` no diretório
+indicado. O comando moderno `rnamining predict ...` continua disponível.
+
 ### `prepare-data`
 
 Prepara o ZIP completo de 16 espécies:

@@ -10,10 +10,11 @@ After installing RNAmining, run inference by providing a FASTA file, the model
 species, and an output directory:
 
 ```bash
-rnamining predict \
-  --input sequences.fa \
-  --organism Homo_sapiens \
-  --output outputs/prediction/
+rnamining \
+  -f sequences.fa \
+  -organism_name Homo_sapiens \
+  -prediction_type coding_prediction \
+  -output_folder outputs/prediction/
 ```
 
 The selected organism must have a matching model under
@@ -64,19 +65,22 @@ training, single-species training, prediction, and model evaluation. See the
 Build the standalone CLI image from the repository root:
 
 ```bash
-docker build -f docker/cli/Dockerfile -t rnamining:1.0.4 .
+docker build -f docker/cli/Dockerfile -t rnamining:1.1.0 .
 ```
 
 The image has the Python environment, RNAmining package, and versioned models
-inside it. The entrypoint is the CLI itself, so a prediction can be run with:
+inside it. The executable is available on `PATH`, and the image can be used
+without an entrypoint override, so a prediction can be run with:
 
 ```bash
 docker run --rm \
   -v "$PWD:/work" \
-  rnamining:1.0.4 predict \
-  --input /work/sequences.fa \
-  --organism Homo_sapiens \
-  --output /work/outputs/prediction
+  rnamining:1.1.0 \
+  rnamining \
+  -f /work/sequences.fa \
+  -organism_name Homo_sapiens \
+  -prediction_type coding_prediction \
+  -output_folder /work/outputs/prediction
 ```
 
 For a local-like experience, use the repository wrapper. It preserves the
@@ -94,7 +98,7 @@ bin/rnamining predict \
 The image tag can be changed without editing the wrapper:
 
 ```bash
-RNAMINING_DOCKER_IMAGE=rnamining:1.0.4 bin/rnamining --help
+RNAMINING_DOCKER_IMAGE=rnamining:1.1.0 bin/rnamining --help
 ```
 
 Preparation, training, and evaluation use the same image. See the

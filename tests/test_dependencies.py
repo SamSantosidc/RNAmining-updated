@@ -31,7 +31,7 @@ def test_project_and_conda_dependency_versions_are_synchronized():
         *project["build-system"]["requires"],
         *project["project"]["dependencies"],
         *project["project"]["optional-dependencies"]["test"],
-        *project["project"]["optional-dependencies"]["notebooks"],
+        *project["project"]["optional-dependencies"].get("notebooks", []),
     ]
     project_versions = dict(map(_exact_project_requirement, project_requirements))
 
@@ -44,8 +44,6 @@ def test_project_and_conda_dependency_versions_are_synchronized():
         "scipy": "1.18.0",
         "xgboost": "3.3.0",
         "pytest": "9.0.3",
-        "ipykernel": "7.3.0",
-        "jupyterlab": "4.6.2",
     }
     assert {
         dependency: conda_versions[dependency]

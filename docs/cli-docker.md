@@ -8,7 +8,7 @@ Não é necessário instalar Python ou Conda no host.
 Na raiz do repositório:
 
 ```bash
-docker build -f docker/cli/Dockerfile -t rnamining:1.0.4 .
+docker build -f docker/cli/Dockerfile -t rnamining:1.1.0 .
 ```
 
 O `Dockerfile` usa Debian, Miniforge Linux x86-64 e as versões declaradas em
@@ -19,14 +19,17 @@ O `Dockerfile` usa Debian, Miniforge Linux x86-64 e as versões declaradas em
 ```bash
 docker run --rm \
   -v "$PWD:/work" -w /work \
-  rnamining:1.0.4 predict \
-  --input /work/sequences.fa \
-  --organism Homo_sapiens \
-  --output /work/outputs/prediction
+  rnamining:1.1.0 rnamining \
+  -f /work/sequences.fa \
+  -organism_name Homo_sapiens \
+  -prediction_type coding_prediction \
+  -output_folder /work/outputs/prediction
 ```
 
-O entrypoint já é `rnamining`. Preparação, treinamento e avaliação usam a
-mesma forma de chamada. Os modelos internos da imagem são usados por padrão.
+O executável `rnamining` está no `PATH`; a imagem não define um entrypoint para
+que scripts gerados pelo Nextflow possam ser executados diretamente. Preparação,
+treinamento e avaliação usam a mesma forma de chamada. Os modelos internos da
+imagem são usados por padrão.
 
 ## Wrapper do projeto
 
@@ -44,7 +47,7 @@ bin/rnamining predict \
 Para usar outra tag:
 
 ```bash
-RNAMINING_DOCKER_IMAGE=rnamining:1.0.4 bin/rnamining --help
+RNAMINING_DOCKER_IMAGE=rnamining:1.1.0 bin/rnamining --help
 ```
 
 Arquivos escritos em caminhos relativos aparecem no host montado em `/work`.

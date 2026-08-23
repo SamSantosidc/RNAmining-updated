@@ -11,6 +11,7 @@ from .features import feature_matrix
 from .inference import predict_file
 from .metadata import get_species_metadata, select_species
 from .training import train_models, train_single_species
+from . import __version__
 
 
 def _train_ratio(value):
@@ -121,8 +122,35 @@ def _evaluate_species_models(
 
 def build_parser():
     parser = argparse.ArgumentParser(prog="rnamining")
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"rnamining {__version__}",
+    )
 
-    commands = parser.add_subparsers(dest="command", required=True)
+    # This is the public interface used by PULPOSEQ.  Keep it at the root so
+    # that `rnamining -f ...` does not require a compatibility subcommand.
+    parser.add_argument("-f", dest="legacy_input", default=None, metavar="FASTA")
+    parser.add_argument(
+        "-organism_name",
+        dest="legacy_organism",
+        default=None,
+        metavar="ORGANISM",
+    )
+    parser.add_argument(
+        "-prediction_type",
+        dest="legacy_prediction_type",
+        default="coding_prediction",
+        metavar="TYPE",
+    )
+    parser.add_argument(
+        "-output_folder",
+        dest="legacy_output",
+        default=None,
+        metavar="DIRECTORY",
+    )
+
+    commands = parser.add_subparsers(dest="command")
 
     prepare = commands.add_parser("prepare-data", help="extract and prepare an S5 dataset")
     prepare.add_argument("--input", required=True)
@@ -180,11 +208,33 @@ def build_parser():
     return parser
 
 
+def _validate_prediction_type(prediction_type):
+    if prediction_type != "coding_prediction":
+        raise ValueError(
+            "Unsupported prediction type: "
+            f"{prediction_type!r}; only 'coding_prediction' is supported"
+        )
+
+
 
 def main(argv=None):
     args = build_parser().parse_args(argv)
-    
-    if args.command == "prepare-data":
+
+    if args.command is None:
+        legacy_values = (args.legacy_input, args.legacy_organism, args.legacy_output)
+        if not any(value is not None for value in legacy_values):
+            raise SystemExit("a command or the PULPOSEQ compatibility arguments are required")
+        if any(value is None for value in legacy_values):
+            raise SystemExit("-f, -organism_name, and -output_folder are required together")
+        _validate_prediction_type(args.legacy_prediction_type)
+        predict_file(
+            args.legacy_input,
+            args.legacy_organism,
+            args.legacy_output,
+            prediction_type=args.legacy_prediction_type,
+        )
+
+    elif args.command == "prepare-data":
         prepare_data(
             args.input,
             args.output,
@@ -207,6 +257,7 @@ def main(argv=None):
         train_single_species(args.data, args.species, args.output, seed=args.seed)
 
     elif args.command == "predict":
+        _validate_prediction_type(args.prediction_type)
         predict_file(
             args.input,
             args.organism,

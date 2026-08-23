@@ -47,7 +47,10 @@ def predict_file(input_path, organism, output_dir, *, model_dir=None, prediction
         for index, (record, prediction, probability) in enumerate(zip(records, predictions, probabilities)):
             label = "non-coding" if int(prediction) == 0 else "coding"
             ending = "\n" if index < len(records) - 1 else ""
-            result.write(f"{record.header}\t{label}\t{max(probability)}{ending}")
+            # PULPOSEQ merges this column with the GTF `qry_id`, which is the
+            # first token of the FASTA header.  FASTA outputs retain the full
+            # header, but the tabular identifier must be unambiguous.
+            result.write(f"{record.identifier}\t{label}\t{max(probability)}{ending}")
 
     coding = [record for record, value in zip(records, predictions) if int(value) != 0]
     noncoding = [record for record, value in zip(records, predictions) if int(value) == 0]

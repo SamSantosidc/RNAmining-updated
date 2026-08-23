@@ -6,7 +6,7 @@ LABEL org.opencontainers.image.source="https://github.com/SamSantosidc/RNAmining
 
 ARG MINIFORGE_VERSION=26.3.2-2
 ARG MINIFORGE_SHA256=42260ffe3830fb953d5eee1bbb32229ff06aa7c3833c1ed7a9a0420a95685d94
-ARG APP_VERSION=1.0.4
+ARG APP_VERSION=1.1.0
 
 ENV RNAMINING_PROJECT_DIR=/opt/rnamining
 ENV RNAMINING_MODEL_DIR=/opt/rnamining/models/coding_prediction
@@ -37,5 +37,3 @@ RUN python -m pip install --no-deps --no-build-isolation . \
     && python -c "import rnamining; print(rnamining.__file__)"
 
 LABEL org.opencontainers.image.version="${APP_VERSION}"
-
-ENTRYPOINT ["rnamining"]

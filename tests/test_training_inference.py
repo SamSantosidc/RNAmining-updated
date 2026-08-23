@@ -42,7 +42,7 @@ def test_inference_labels_probabilities_and_fasta_outputs(tmp_path):
     output = tmp_path / "output"
     predict_file(source, "Test_species", output, model_dir=models)
     text = (output / "predictions.txt").read_text()
-    assert "coding sequence\tcoding\t0.9" in text
-    assert "noncoding sequence\tnon-coding\t0.8" in text
+    assert "coding\tcoding\t0.9" in text
+    assert "noncoding\tnon-coding\t0.8" in text
     assert (output / "codings.txt").read_text() == ">coding sequence\nAAA\n"
     assert (output / "noncodings.txt").read_text() == ">noncoding sequence\nCCC\n"
