@@ -22,9 +22,11 @@ if (!is_dir($output)) { mkdir($output, 0755, true); }
 if (!is_dir($logs)) { mkdir($logs, 0755, true); }
 
 $command = array(
-    RNAMINING_PYTHON, '-m', 'rnamining.cli', 'predict',
-    '--input', $input, '--organism', $organism, '--output', $output,
-    '--models', RNAMINING_PROJECT_DIR . '/models/coding_prediction'
+    RNAMINING_PYTHON, '-m', 'rnamining.cli',
+    '-f', $input,
+    '-organism_name', $organism,
+    '-prediction_type', 'coding_prediction',
+    '-output_folder', $output
 );
 $escaped = implode(' ', array_map('escapeshellarg', $command));
 $environment = 'PYTHONPATH=' . escapeshellarg(RNAMINING_PROJECT_DIR . '/src') . ' ';
@@ -43,4 +45,3 @@ if ($archive->open($output . '/RNAmining.zip', ZipArchive::CREATE | ZipArchive::
 }
 header('Content-Type: application/json');
 echo json_encode(array('return' => 'success'));
-

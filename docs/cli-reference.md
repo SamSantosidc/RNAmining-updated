@@ -17,7 +17,7 @@ Todos os caminhos relativos são resolvidos a partir do diretório atual.
 
 ## Comandos
 
-### Compatibilidade com PULPOSEQ
+### Predição
 
 A interface de predição usada pelo PULPOSEQ é suportada diretamente:
 
@@ -28,8 +28,8 @@ rnamining -f sequences.fa \
   -output_folder outputs/prediction/
 ```
 
-Ela gera `predictions.txt`, `codings.txt` e `noncodings.txt` no diretório
-indicado. O comando moderno `rnamining predict ...` continua disponível.
+Ela gera `predictions.txt`, `codings.txt`, `noncodings.txt` e
+`edited_file.fasta` no diretório indicado.
 
 ### `prepare-data`
 
@@ -65,22 +65,6 @@ rnamining train-species --data data/processed/train_test_split \
 O primeiro treina todos os pares disponíveis; o segundo treina apenas a
 espécie informada. Ambos escrevem `<species>.pkl` e podem substituir arquivos
 existentes.
-
-### `predict`
-
-```bash
-rnamining predict --input sequences.fa --organism Homo_sapiens \
-  --output outputs/prediction/ \
-  [--models models/coding_prediction] \
-  [--prediction-type coding_prediction]
-```
-
-`--models` aponta para o diretório que contém `<organism>.pkl`. Sem essa opção,
-o padrão é o diretório de modelos do repositório; `RNAMINING_MODEL_DIR` também
-pode configurar esse padrão. O FASTA deve ter headers `>` e sequência não vazia.
-
-Saídas: `predictions.txt`, `codings.txt`, `noncodings.txt` e
-`edited_file.fasta`.
 
 ### `evaluate`
 

@@ -89,10 +89,11 @@ current user's UID/GID, and keeps relative paths working:
 
 ```bash
 chmod +x bin/rnamining
-bin/rnamining predict \
-  --input tests/fixtures/anolis_regression.fa \
-  --organism Anolis_carolinensis \
-  --output outputs/docker-prediction
+bin/rnamining \
+  -f tests/fixtures/anolis_regression.fa \
+  -organism_name Anolis_carolinensis \
+  -prediction_type coding_prediction \
+  -output_folder outputs/docker-prediction
 ```
 
 The image tag can be changed without editing the wrapper:

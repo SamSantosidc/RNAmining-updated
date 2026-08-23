@@ -38,10 +38,11 @@ trabalho e executa o container com o UID/GID do usuário atual:
 
 ```bash
 chmod +x bin/rnamining
-bin/rnamining predict \
-  --input tests/fixtures/anolis_regression.fa \
-  --organism Anolis_carolinensis \
-  --output outputs/docker-prediction
+bin/rnamining \
+  -f tests/fixtures/anolis_regression.fa \
+  -organism_name Anolis_carolinensis \
+  -prediction_type coding_prediction \
+  -output_folder outputs/docker-prediction
 ```
 
 Para usar outra tag:

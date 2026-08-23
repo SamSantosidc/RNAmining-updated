@@ -37,14 +37,14 @@ def test_cli_exposes_reproducibility_and_output_options():
     assert args.train_ratio == 0.75
 
     args = cli.build_parser().parse_args([
-        "predict",
-        "--input", "input.fa",
-        "--organism", "Homo_sapiens",
-        "--output", "output",
-        "--models", "models",
-        "--prediction-type", "custom_prediction",
+        "-f", "input.fa",
+        "-organism_name", "Homo_sapiens",
+        "-output_folder", "output",
+        "-prediction_type", "custom_prediction",
     ])
-    assert args.models == "models"
+    assert args.input == "input.fa"
+    assert args.organism == "Homo_sapiens"
+    assert args.output == "output"
     assert args.prediction_type == "custom_prediction"
 
 
@@ -92,7 +92,7 @@ def test_version_flag_reports_package_version(capsys):
     assert capsys.readouterr().out.strip() == "rnamining 1.1.0"
 
 
-def test_legacy_cli_rejects_unsupported_prediction_type(tmp_path):
+def test_cli_rejects_unsupported_prediction_type(tmp_path):
     with pytest.raises(ValueError, match="only 'coding_prediction' is supported"):
         main([
             "-f", str(tmp_path / "input.fa"),
@@ -192,18 +192,6 @@ def test_train_single_species_cli_rejects_species_outside_catalog(tmp_path):
             "--output",
             str(tmp_path / "models"),
         ])
-
-
-def test_predict_cli(tmp_path):
-    source = tmp_path / "input.fa"
-    source.write_text(">one\nAAA\n")
-    models = tmp_path / "models"
-    models.mkdir()
-    with (models / "Test_species.pkl").open("wb") as handle:
-        pickle.dump(SmallModel(), handle)
-    output = tmp_path / "result"
-    assert main(["predict", "--input", str(source), "--organism", "Test_species", "--output", str(output), "--models", str(models)]) == 0
-    assert (output / "predictions.txt").is_file()
 
 
 def test_evaluate_cli_discovers_species_models_and_exports_metrics(tmp_path, monkeypatch):

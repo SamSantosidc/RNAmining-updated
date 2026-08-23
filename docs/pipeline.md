@@ -65,8 +65,10 @@ com o mesmo nome são substituídos.
 ## Predição e avaliação
 
 ```bash
-rnamining predict --input sequences.fa \
-  --organism Homo_sapiens --output outputs/prediction/
+rnamining -f sequences.fa \
+  -organism_name Homo_sapiens \
+  -prediction_type coding_prediction \
+  -output_folder outputs/prediction/
 rnamining evaluate --output outputs/evaluation/current_models/
 ```
 

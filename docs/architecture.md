@@ -28,7 +28,7 @@ Nginx expõe apenas `web/public/` e encaminha PHP para PHP-FPM. O fluxo é
 síncrono:
 
 1. `api/upload.php` valida extensão/tamanho e salva o FASTA.
-2. `api/predict.php` valida a espécie e executa `python -m rnamining.cli predict`.
+2. `api/predict.php` valida a espécie e executa a interface oficial de predição do RNAmining.
 3. `results.php` lê `predictions.txt`.
 4. `api/download.php` libera somente arquivos de resultado conhecidos.
 

@@ -1,4 +1,4 @@
-"""Model selection, prediction, and legacy-compatible output files."""
+"""Model selection, prediction, and output files."""
 
 import os
 import pickle
