@@ -40,15 +40,15 @@ def test_cli_exposes_reproducibility_and_output_options():
         "-f", "input.fa",
         "-organism_name", "Homo_sapiens",
         "-output_folder", "output",
-        "-prediction_type", "custom_prediction",
+        "-prediction_type", "coding_prediction",
     ])
     assert args.input == "input.fa"
     assert args.organism == "Homo_sapiens"
     assert args.output == "output"
-    assert args.prediction_type == "custom_prediction"
+    assert args.prediction_type == "coding_prediction"
 
 
-def test_pulposeq_compatibility_cli_writes_contract_outputs(tmp_path, monkeypatch):
+def test_official_prediction_cli_writes_contract_outputs(tmp_path, monkeypatch):
     source = tmp_path / "transcripts.fa"
     source.write_text(
         ">qry001 transcript description\nAAA\n"
