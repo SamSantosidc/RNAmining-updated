@@ -1,6 +1,7 @@
 import pickle
 
 import numpy as np
+import pytest
 
 from rnamining.fasta import FastaRecord
 from rnamining.inference import predict_file
@@ -13,6 +14,14 @@ class SmallModel:
 
     def predict_proba(self, matrix):
         return np.asarray([[0.1, 0.9] if row[0] > 0 else [0.8, 0.2] for row in matrix])
+
+
+class InvalidLabelModel:
+    def predict(self, matrix):
+        return np.asarray([2 for _ in matrix])
+
+    def predict_proba(self, matrix):
+        return np.asarray([[0.1, 0.9] for _ in matrix])
 
 
 def test_default_model_dir_honors_environment_override(monkeypatch, tmp_path):
@@ -46,3 +55,15 @@ def test_inference_labels_probabilities_and_fasta_outputs(tmp_path):
     assert "noncoding\tnon-coding\t0.8" in text
     assert (output / "codings.txt").read_text() == ">coding sequence\nAAA\n"
     assert (output / "noncodings.txt").read_text() == ">noncoding sequence\nCCC\n"
+
+
+def test_inference_rejects_nonbinary_model_labels(tmp_path):
+    source = tmp_path / "sequences.fa"
+    source.write_text(">sequence\nAAA\n")
+    models = tmp_path / "models"
+    models.mkdir()
+    with (models / "Test_species.pkl").open("wb") as handle:
+        pickle.dump(InvalidLabelModel(), handle)
+
+    with pytest.raises(ValueError, match="binary labels 0"):
+        predict_file(source, "Test_species", tmp_path / "output", model_dir=models)

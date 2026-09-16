@@ -30,19 +30,22 @@ def test_project_and_conda_dependency_versions_are_synchronized():
     project_requirements = [
         *project["build-system"]["requires"],
         *project["project"]["dependencies"],
+        *project["project"]["optional-dependencies"]["data"],
+        *project["project"]["optional-dependencies"]["evaluation"],
+        *project["project"]["optional-dependencies"]["development"],
         *project["project"]["optional-dependencies"]["test"],
-        *project["project"]["optional-dependencies"].get("notebooks", []),
     ]
     project_versions = dict(map(_exact_project_requirement, project_requirements))
 
     assert project_versions == {
         "setuptools": "83.0.0",
-        "biopython": "1.87",
         "numpy": "2.5.1",
-        "pandas": "3.0.3",
-        "scikit-learn": "1.9.0",
         "scipy": "1.18.0",
         "xgboost": "3.3.0",
+        "pyyaml": "6.0.2",
+        "scikit-learn": "1.9.0",
+        "biopython": "1.87",
+        "pandas": "3.0.3",
         "pytest": "9.0.3",
     }
     assert {

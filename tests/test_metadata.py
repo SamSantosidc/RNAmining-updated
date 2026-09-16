@@ -1,7 +1,9 @@
 import csv
+import importlib
 
 import pytest
 
+import rnamining.metadata as metadata_module
 from rnamining.data_preparation import prepare_single_species
 from rnamining.metadata import (
     DISTANCE_GROUP_CLASSIFICATIONS,
@@ -13,6 +15,14 @@ from rnamining.metadata import (
     validate_species_names,
 )
 from test_data_preparation import make_single_species_zip
+
+
+def test_metadata_loads_outside_repository_root(monkeypatch, tmp_path):
+    monkeypatch.chdir(tmp_path)
+    metadata = importlib.reload(metadata_module)
+
+    assert len(metadata.SPECIES) == 16
+    assert metadata.get_species_metadata("Homo_sapiens").scientific_name == "Homo sapiens"
 
 
 def test_catalog_contains_all_sixteen_species_and_two_classifications():
@@ -74,7 +84,7 @@ def test_single_species_reports_include_metadata_and_group_counts(tmp_path):
     root = tmp_path / "data"
     prepare_single_species(archive, root)
 
-    with (root / "reports/organism_sequences_stats.csv").open(
+    with (root / "processed/training/S5/reports/organism_sequences_stats.csv").open(
         newline="", encoding="utf-8"
     ) as handle:
         rows = list(csv.DictReader(handle))
@@ -83,7 +93,7 @@ def test_single_species_reports_include_metadata_and_group_counts(tmp_path):
     }
     assert {row["evolutionary_distance_group"] for row in rows} == {"D"}
 
-    with (root / "reports/evolutionary_distance_group_stats.csv").open(
+    with (root / "processed/training/S5/reports/evolutionary_distance_group_stats.csv").open(
         newline="", encoding="utf-8"
     ) as handle:
         distance_rows = list(csv.DictReader(handle))

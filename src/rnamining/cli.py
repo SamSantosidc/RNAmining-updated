@@ -4,14 +4,15 @@ import argparse
 import pickle
 from pathlib import Path
 
-from .data_preparation import SPECIES, prepare_data, prepare_single_species
-from .evaluation import evaluate_model, export_results, summarize_metrics
 from .fasta import read_fasta
 from .features import feature_matrix
 from .inference import predict_file
-from .metadata import get_species_metadata, select_species
-from .training import train_models, train_single_species
 from . import __version__
+
+
+# Retain a patchable compatibility attribute without loading the metadata
+# catalog (and PyYAML) for prediction or --version.
+SPECIES = None
 
 
 def _train_ratio(value):
@@ -44,10 +45,14 @@ def _evaluate_species_models(
     evolutionary_group=None,
     distance_group=None,
 ):
+    from .evaluation import evaluate_model, export_results, summarize_metrics
+    from .metadata import SPECIES as catalog_species
+    from .metadata import get_species_metadata, select_species
+
     models = Path(models_dir)
     tests = Path(tests_dir)
     if species is None and evolutionary_group is None and distance_group is None:
-        selected_species = tuple(SPECIES)
+        selected_species = tuple(SPECIES if SPECIES is not None else catalog_species)
     else:
         selected_species = select_species(
             species,
@@ -185,13 +190,40 @@ def build_parser():
         help="evaluate the current species-specific models",
     )
     evaluate.add_argument("--models", default="models/coding_prediction")
-    evaluate.add_argument("--tests", default="data/evaluation")
+    evaluate.add_argument(
+        "--tests",
+        default="data/processed/training/S5/evaluation",
+    )
     evaluate.add_argument("--output", required=True)
     evaluate.add_argument("--seed", type=int, default=42)
     evaluate.add_argument("--repetition", type=int, default=1)
     evaluate.add_argument("--species", action="append", default=None)
     evaluate.add_argument("--evolutionary-group", default=None)
     evaluate.add_argument("--distance-group", default=None)
+
+    predict = commands.add_parser(
+        "predict",
+        help="predict coding potential from a FASTA file",
+    )
+    predict.add_argument("-f", "--input", required=True, metavar="FASTA")
+    predict.add_argument(
+        "-organism_name",
+        "--organism",
+        required=True,
+        metavar="ORGANISM",
+    )
+    predict.add_argument(
+        "-prediction_type",
+        "--prediction-type",
+        default="coding_prediction",
+        metavar="TYPE",
+    )
+    predict.add_argument(
+        "-output_folder",
+        "--output",
+        required=True,
+        metavar="DIRECTORY",
+    )
 
     return parser
 
@@ -223,6 +255,8 @@ def main(argv=None):
         )
 
     elif args.command == "prepare-data":
+        from .data_preparation import prepare_data
+
         prepare_data(
             args.input,
             args.output,
@@ -231,6 +265,8 @@ def main(argv=None):
         )
 
     elif args.command == "prepare-species":
+        from .data_preparation import prepare_single_species
+
         prepare_single_species(
             args.input,
             args.output,
@@ -239,10 +275,23 @@ def main(argv=None):
         )
 
     elif args.command == "train":
+        from .training import train_models
+
         train_models(args.data, args.output, seed=args.seed)
 
     elif args.command == "train-species":
+        from .training import train_single_species
+
         train_single_species(args.data, args.species, args.output, seed=args.seed)
+
+    elif args.command == "predict":
+        _validate_prediction_type(args.prediction_type)
+        predict_file(
+            args.input,
+            args.organism,
+            args.output,
+            prediction_type=args.prediction_type,
+        )
 
     elif args.command == "evaluate":
         _evaluate_species_models(

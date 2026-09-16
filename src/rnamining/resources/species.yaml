@@ -1,0 +1,72 @@
+species:
+  - identifier: Anolis_carolinensis
+    scientific_name: Anolis carolinensis
+    evolutionary_group: "Répteis — Lepidosauria"
+    evolutionary_distance_group: B
+  - identifier: Chrysemys_picta_bellii
+    scientific_name: Chrysemys picta bellii
+    evolutionary_group: Quelônios
+    evolutionary_distance_group: B
+  - identifier: Crocodylus_porosus
+    scientific_name: Crocodylus porosus
+    evolutionary_group: "Répteis — Archosauria"
+    evolutionary_distance_group: B
+  - identifier: Danio_rerio
+    scientific_name: Danio rerio
+    evolutionary_group: "Peixes ósseos — Teleostei"
+    evolutionary_distance_group: D
+  - identifier: Eptatretus_burgeri
+    scientific_name: Eptatretus burgeri
+    evolutionary_group: "Ciclóstomos — Agnatha"
+    evolutionary_distance_group: E
+  - identifier: Gallus_gallus
+    scientific_name: Gallus gallus
+    evolutionary_group: Aves
+    evolutionary_distance_group: B
+  - identifier: Homo_sapiens
+    scientific_name: Homo sapiens
+    evolutionary_group: "Mamíferos placentários — Eutheria"
+    evolutionary_distance_group: A
+  - identifier: Latimeria_chalumnae
+    scientific_name: Latimeria chalumnae
+    evolutionary_group: "Peixes de nadadeiras lobadas — Sarcopterygii"
+    evolutionary_distance_group: D
+  - identifier: Monodelphis_domestica
+    scientific_name: Monodelphis domestica
+    evolutionary_group: Mamífero marsupial
+    evolutionary_distance_group: A
+  - identifier: Mus_musculus
+    scientific_name: Mus musculus
+    evolutionary_group: "Mamíferos placentários — Eutheria"
+    evolutionary_distance_group: A
+  - identifier: Notechis_scutatus
+    scientific_name: Notechis scutatus
+    evolutionary_group: "Répteis — Lepidosauria"
+    evolutionary_distance_group: B
+  - identifier: Ornithorhynchus_anatinus
+    scientific_name: Ornithorhynchus anatinus
+    evolutionary_group: Mamífero monotremado
+    evolutionary_distance_group: A
+  - identifier: Petromyzon_marinus
+    scientific_name: Petromyzon marinus
+    evolutionary_group: "Ciclóstomos — Agnatha"
+    evolutionary_distance_group: E
+  - identifier: Rattus_norvegicus
+    scientific_name: Rattus norvegicus
+    evolutionary_group: "Mamíferos placentários — Eutheria"
+    evolutionary_distance_group: A
+  - identifier: Sphenodon_punctatus
+    scientific_name: Sphenodon punctatus
+    evolutionary_group: "Répteis — Lepidosauria"
+    evolutionary_distance_group: B
+  - identifier: Xenopus_tropicalis
+    scientific_name: Xenopus tropicalis
+    evolutionary_group: Anfíbios
+    evolutionary_distance_group: C
+
+distance_group_classifications:
+  A: Mamíferos
+  B: Sauropsida
+  C: Anfíbios
+  D: Peixes
+  E: Vertebrados basais

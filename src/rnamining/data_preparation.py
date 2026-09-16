@@ -266,12 +266,13 @@ def prepare_single_species(
     species, cds, ncrna = _single_species_archive(input_zip)
 
     output = Path(output_dir)
-    raw = output / "raw"
-    split = output / "processed" / "train_test_split"
+    raw = output / "raw" / "training" / "S5"
+    split = output / "processed" / "training" / "S5" / "train_test_split"
     coding = split / "coding"
     noncoding = split / "noncoding"
-    evaluation = output / "evaluation"
-    reports = output / "reports"
+    processed = output / "processed" / "training" / "S5"
+    evaluation = processed / "evaluation"
+    reports = processed / "reports"
 
     for directory in (raw, coding, noncoding, evaluation, reports):
         directory.mkdir(parents=True, exist_ok=True)
@@ -324,12 +325,13 @@ def prepare_data(
     ) -> list[str]:
     
     output = Path(output_dir)
-    raw = output / "raw"
-    split = output / "processed" / "train_test_split"
+    raw = output / "raw" / "training" / "S5"
+    split = output / "processed" / "training" / "S5" / "train_test_split"
     coding = split / "coding"
     noncoding = split / "noncoding"
-    evaluation = output / "evaluation"
-    reports = output / "reports"
+    processed = output / "processed" / "training" / "S5"
+    evaluation = processed / "evaluation"
+    reports = processed / "reports"
 
     for directory in (raw, coding, noncoding, evaluation, reports):
         directory.mkdir(parents=True, exist_ok=True)

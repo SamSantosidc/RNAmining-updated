@@ -22,7 +22,7 @@ def test_prepare_data_cli(tmp_path):
     archive = tmp_path / "S5_File.zip"
     make_s5_zip(archive, SPECIES, coding_count=2, noncoding_count=2)
     assert main(["prepare-data", "--input", str(archive), "--output", str(tmp_path / "data")]) == 0
-    assert len(list((tmp_path / "data/evaluation").glob("*_test.fa"))) == 16
+    assert len(list((tmp_path / "data/processed/training/S5/evaluation").glob("*_test.fa"))) == 16
 
 
 def test_cli_exposes_reproducibility_and_output_options():
@@ -124,7 +124,7 @@ def test_prepare_single_species_cli(tmp_path):
         "--output",
         str(output),
     ]) == 0
-    assert (output / "evaluation/Anolis_carolinensis_test.fa").is_file()
+    assert (output / "processed/training/S5/evaluation/Anolis_carolinensis_test.fa").is_file()
 
 
 def test_train_cli(tmp_path, monkeypatch):

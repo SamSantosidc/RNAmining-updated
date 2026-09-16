@@ -16,6 +16,21 @@ def default_model_dir() -> Path:
     return Path(__file__).resolve().parents[2] / "models" / "coding_prediction"
 
 
+def _binary_prediction_label(prediction) -> int:
+    """Validate the binary label convention used by RNAmining models."""
+    try:
+        label = int(prediction)
+    except (TypeError, ValueError) as error:
+        raise ValueError(f"Model predicted an invalid class: {prediction!r}") from error
+
+    if label not in (0, 1) or label != prediction:
+        raise ValueError(
+            "Model predictions must use the binary labels 0 (non-coding) "
+            f"or 1 (coding), got {prediction!r}."
+        )
+    return label
+
+
 
 def predict_file(input_path, organism, output_dir, *, model_dir=None, prediction_type="coding_prediction"):
     source = Path(input_path)
@@ -36,6 +51,7 @@ def predict_file(input_path, organism, output_dir, *, model_dir=None, prediction
     matrix = feature_matrix(records)
     predictions = model.predict(matrix)
     probabilities = model.predict_proba(matrix)
+    labels = [_binary_prediction_label(prediction) for prediction in predictions]
 
     prediction_path = output / "predictions.txt"
     with prediction_path.open("w", encoding="utf-8") as result:
@@ -44,16 +60,16 @@ def predict_file(input_path, organism, output_dir, *, model_dir=None, prediction
         result.write(f"Name of the Organism: {organism}\n")
         result.write("Sequence ID \t Predictions:\n\n")
 
-        for index, (record, prediction, probability) in enumerate(zip(records, predictions, probabilities)):
-            label = "non-coding" if int(prediction) == 0 else "coding"
+        for index, (record, prediction, probability) in enumerate(zip(records, labels, probabilities)):
+            label = "non-coding" if prediction == 0 else "coding"
             ending = "\n" if index < len(records) - 1 else ""
             # PULPOSEQ merges this column with the GTF `qry_id`, which is the
             # first token of the FASTA header.  FASTA outputs retain the full
             # header, but the tabular identifier must be unambiguous.
             result.write(f"{record.identifier}\t{label}\t{max(probability)}{ending}")
 
-    coding = [record for record, value in zip(records, predictions) if int(value) != 0]
-    noncoding = [record for record, value in zip(records, predictions) if int(value) == 0]
+    coding = [record for record, label in zip(records, labels) if label == 1]
+    noncoding = [record for record, label in zip(records, labels) if label == 0]
 
     write_fasta(coding, output / "codings.txt")
     write_fasta(noncoding, output / "noncodings.txt")

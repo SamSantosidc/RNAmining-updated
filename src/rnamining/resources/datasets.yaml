@@ -1,0 +1,10 @@
+datasets:
+  S5:
+    role: training
+    description: Dataset used to retrain the species-specific RNAmining models.
+
+  ensembl_homo_sapiens_116:
+    role: external_validation
+    source: Ensembl
+    release: 116
+    species: Homo_sapiens

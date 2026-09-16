@@ -1,10 +1,10 @@
 *
 !environment.yml
-!docker/
-!docker/**
 !pyproject.toml
 !README.md
 !src/
 !src/**
 !models/
 !models/**
+!docker/
+!docker/**

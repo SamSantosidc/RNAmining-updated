@@ -5,7 +5,7 @@
 ```bash
 conda env create --file environment.yml
 conda activate rnamining
-python -m pip install -e .
+python -m pip install -e ".[data,evaluation,development,test]"
 ```
 
 ```bash
@@ -31,14 +31,26 @@ rnamining -f sequences.fa \
 Ela gera `predictions.txt`, `codings.txt`, `noncodings.txt` e
 `edited_file.fasta` no diretório indicado.
 
+Também é possível usar o subcomando explícito:
+
+```bash
+rnamining predict -f sequences.fa \
+  -organism_name Homo_sapiens \
+  -prediction_type coding_prediction \
+  -output_folder outputs/prediction/
+```
+
 ### `prepare-data`
 
 Prepara o ZIP completo de 16 espécies:
 
 ```bash
-rnamining prepare-data --input S5_File.zip --output data/ \
+rnamining prepare-data --input data/raw/training/S5/S5_File.zip --output data/ \
   [--seed 42] [--train-ratio 0.8]
 ```
+
+O arquivo S5 pode ser mantido em `data/raw/training/S5/S5_File.zip`; nesse
+caso, use `--input data/raw/training/S5/S5_File.zip`.
 
 `--train-ratio` deve estar estritamente entre 0 e 1.
 
@@ -55,10 +67,10 @@ rnamining prepare-species --input species.zip --output data/ \
 ### `train` e `train-species`
 
 ```bash
-rnamining train --data data/processed/train_test_split \
+rnamining train --data data/processed/training/S5/train_test_split \
   --output models/coding_prediction/ [--seed 42]
 
-rnamining train-species --data data/processed/train_test_split \
+rnamining train-species --data data/processed/training/S5/train_test_split \
   --species Homo_sapiens --output models/coding_prediction/ [--seed 42]
 ```
 

@@ -39,14 +39,14 @@ def test_preparation_balances_splits_reports_and_writes_ground_truth(tmp_path):
     prepare_data(archive, tmp_path / "second", expected_species=("Alpha_beta",))
 
     root = tmp_path / "first"
-    assert len(read_fasta(root / "processed/train_test_split/coding/Alpha_beta_coding_train.fa")) == 3
-    assert len(read_fasta(root / "processed/train_test_split/noncoding/Alpha_beta_noncoding_train.fa")) == 3
-    assert len(read_fasta(root / "processed/train_test_split/coding/Alpha_beta_coding_test.fa")) == 1
-    mixed = read_fasta(root / "evaluation/Alpha_beta_test.fa")
+    assert len(read_fasta(root / "processed/training/S5/train_test_split/coding/Alpha_beta_coding_train.fa")) == 3
+    assert len(read_fasta(root / "processed/training/S5/train_test_split/noncoding/Alpha_beta_noncoding_train.fa")) == 3
+    assert len(read_fasta(root / "processed/training/S5/train_test_split/coding/Alpha_beta_coding_test.fa")) == 1
+    mixed = read_fasta(root / "processed/training/S5/evaluation/Alpha_beta_test.fa")
     assert {record.header.rsplit("class:", 1)[1] for record in mixed} == {"coding", "noncoding"}
-    assert (root / "reports/organism_sequences_stats.csv").is_file()
-    assert (root / "evaluation/Alpha_beta_test.fa").read_bytes() == (
-        tmp_path / "second/evaluation/Alpha_beta_test.fa"
+    assert (root / "processed/training/S5/reports/organism_sequences_stats.csv").is_file()
+    assert (root / "processed/training/S5/evaluation/Alpha_beta_test.fa").read_bytes() == (
+        tmp_path / "second/processed/training/S5/evaluation/Alpha_beta_test.fa"
     ).read_bytes()
 
 
@@ -66,7 +66,7 @@ def test_preparation_reports_each_degenerate_iupac_base_occurrence(tmp_path):
     root = tmp_path / "data"
     prepare_data(archive, root, expected_species=("Alpha_beta",))
 
-    with (root / "reports/organism_sequences_stats.csv").open(newline="", encoding="utf-8") as report:
+    with (root / "processed/training/S5/reports/organism_sequences_stats.csv").open(newline="", encoding="utf-8") as report:
         rows = list(csv.DictReader(report))
 
     coding = next(row for row in rows if row["seq_type"] == "cds")
@@ -83,15 +83,15 @@ def test_single_species_preparation_accepts_dotted_assembly_and_reuses_outputs(t
     root = tmp_path / "data"
     assert prepare_single_species(archive, root) == "Anolis_carolinensis"
 
-    assert len(read_fasta(root / "raw/Anolis_carolinensis.cds.fa")) == 6
-    assert len(read_fasta(root / "raw/Anolis_carolinensis.ncrna.fa")) == 4
+    assert len(read_fasta(root / "raw/training/S5/Anolis_carolinensis.cds.fa")) == 6
+    assert len(read_fasta(root / "raw/training/S5/Anolis_carolinensis.ncrna.fa")) == 4
     assert len(read_fasta(
-        root / "processed/train_test_split/coding/Anolis_carolinensis_coding_train.fa"
+        root / "processed/training/S5/train_test_split/coding/Anolis_carolinensis_coding_train.fa"
     )) == 3
     assert len(read_fasta(
-        root / "processed/train_test_split/noncoding/Anolis_carolinensis_noncoding_test.fa"
+        root / "processed/training/S5/train_test_split/noncoding/Anolis_carolinensis_noncoding_test.fa"
     )) == 1
-    mixed = read_fasta(root / "evaluation/Anolis_carolinensis_test.fa")
+    mixed = read_fasta(root / "processed/training/S5/evaluation/Anolis_carolinensis_test.fa")
     assert {record.header.rsplit("class:", 1)[1] for record in mixed} == {
         "coding",
         "noncoding",
@@ -116,7 +116,7 @@ def test_single_species_preparation_accumulates_and_replaces_report_rows(tmp_pat
     )
     prepare_single_species(alpha, root)
 
-    with (root / "reports/organism_sequences_stats.csv").open(
+    with (root / "processed/training/S5/reports/organism_sequences_stats.csv").open(
         newline="",
         encoding="utf-8",
     ) as report:
@@ -132,7 +132,7 @@ def test_single_species_preparation_accumulates_and_replaces_report_rows(tmp_pat
         for row in rows
         if row["species"] == "Anolis_carolinensis"
     } == {"2"}
-    assert (root / "raw/Homo_sapiens.cds.fa").is_file()
+    assert (root / "raw/training/S5/Homo_sapiens.cds.fa").is_file()
 
 
 def test_single_species_preparation_rejects_species_outside_catalog(tmp_path):

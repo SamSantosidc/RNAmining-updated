@@ -3,8 +3,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from importlib.resources import files
 from types import MappingProxyType
 from typing import Iterable, Mapping
+
+import yaml
 
 
 @dataclass(frozen=True)
@@ -17,83 +20,23 @@ class SpeciesMetadata:
     evolutionary_distance_group: str
 
 
-_CATALOG = (
-    SpeciesMetadata(
-        "Anolis_carolinensis", "Anolis carolinensis",
-        "Répteis — Lepidosauria", "B",
-    ),
-    SpeciesMetadata(
-        "Chrysemys_picta_bellii", "Chrysemys picta bellii",
-        "Quelônios", "B",
-    ),
-    SpeciesMetadata(
-        "Crocodylus_porosus", "Crocodylus porosus",
-        "Répteis — Archosauria", "B",
-    ),
-    SpeciesMetadata(
-        "Danio_rerio", "Danio rerio",
-        "Peixes ósseos — Teleostei", "D",
-    ),
-    SpeciesMetadata(
-        "Eptatretus_burgeri", "Eptatretus burgeri",
-        "Ciclóstomos — Agnatha", "E",
-    ),
-    SpeciesMetadata(
-        "Gallus_gallus", "Gallus gallus", "Aves", "B",
-    ),
-    SpeciesMetadata(
-        "Homo_sapiens", "Homo sapiens",
-        "Mamíferos placentários — Eutheria", "A",
-    ),
-    SpeciesMetadata(
-        "Latimeria_chalumnae", "Latimeria chalumnae",
-        "Peixes de nadadeiras lobadas — Sarcopterygii", "D",
-    ),
-    SpeciesMetadata(
-        "Monodelphis_domestica", "Monodelphis domestica",
-        "Mamífero marsupial", "A",
-    ),
-    SpeciesMetadata(
-        "Mus_musculus", "Mus musculus",
-        "Mamíferos placentários — Eutheria", "A",
-    ),
-    SpeciesMetadata(
-        "Notechis_scutatus", "Notechis scutatus",
-        "Répteis — Lepidosauria", "B",
-    ),
-    SpeciesMetadata(
-        "Ornithorhynchus_anatinus", "Ornithorhynchus anatinus",
-        "Mamífero monotremado", "A",
-    ),
-    SpeciesMetadata(
-        "Petromyzon_marinus", "Petromyzon marinus",
-        "Ciclóstomos — Agnatha", "E",
-    ),
-    SpeciesMetadata(
-        "Rattus_norvegicus", "Rattus norvegicus",
-        "Mamíferos placentários — Eutheria", "A",
-    ),
-    SpeciesMetadata(
-        "Sphenodon_punctatus", "Sphenodon punctatus",
-        "Répteis — Lepidosauria", "B",
-    ),
-    SpeciesMetadata(
-        "Xenopus_tropicalis", "Xenopus tropicalis", "Anfíbios", "C",
-    ),
-)
+def _load_metadata() -> dict:
+    resource = files("rnamining").joinpath("resources/species.yaml")
+    with resource.open(encoding="utf-8") as handle:
+        return yaml.safe_load(handle)
+
+
+_METADATA = _load_metadata()
+_CATALOG = tuple(SpeciesMetadata(**entry) for entry in _METADATA["species"])
 
 SPECIES_METADATA: Mapping[str, SpeciesMetadata] = MappingProxyType(
     {item.identifier: item for item in _CATALOG}
 )
 SPECIES = tuple(item.identifier for item in _CATALOG)
 
-DISTANCE_GROUP_CLASSIFICATIONS: Mapping[str, str] = MappingProxyType({
-    "A": "Mamíferos",
-    "B": "Sauropsida",
-    "C": "Anfíbios",
-    "D": "Peixes",
-    "E": "Vertebrados basais",
-})
+DISTANCE_GROUP_CLASSIFICATIONS: Mapping[str, str] = MappingProxyType(
+    _METADATA["distance_group_classifications"]
+)
 
 _LOOKUP = {
     " ".join(value.replace("_", " ").split()).casefold(): identifier

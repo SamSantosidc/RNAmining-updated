@@ -38,7 +38,7 @@ Development uses the pinned Python 3.14.6 Conda environment:
 ```bash
 conda env create --file environment.yml
 conda activate rnamining
-python -m pip install -e .
+python -m pip install -e ".[data,evaluation,development,test]"
 ```
 
 If the environment already exists, activate it and reinstall the editable
@@ -46,7 +46,7 @@ package after updating the source:
 
 ```bash
 conda activate rnamining
-python -m pip install -e .
+python -m pip install -e ".[data,evaluation,development,test]"
 ```
 
 Inspect the available commands with:
@@ -77,6 +77,7 @@ docker run --rm \
   -v "$PWD:/work" \
   rnamining:1.1.0 \
   rnamining \
+  predict \
   -f /work/sequences.fa \
   -organism_name Homo_sapiens \
   -prediction_type coding_prediction \
@@ -102,8 +103,9 @@ The image tag can be changed without editing the wrapper:
 RNAMINING_DOCKER_IMAGE=rnamining:1.1.0 bin/rnamining --help
 ```
 
-Preparation, training, and evaluation use the same image. See the
-[CLI Docker guide](docs/cli-docker.md) for mounts and the project wrapper.
+The standalone image is an inference runtime. Preparation, training, and
+evaluation use the full local Conda environment. See the [CLI Docker
+guide](docs/cli-docker.md) for mounts and the project wrapper.
 
 ## Run the web application
 

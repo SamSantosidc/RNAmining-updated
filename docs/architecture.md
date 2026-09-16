@@ -22,6 +22,14 @@ Os modelos versionados ficam em `models/coding_prediction/<species>.pkl`.
 Cada espécie possui um modelo próprio; o organismo informado determina o
 arquivo carregado.
 
+Os dados são separados por finalidade: fontes imutáveis ficam em
+`data/raw/`, produtos de preparação ficam em `data/processed/` e a definição
+de espécies e conjuntos de dados fica em `src/rnamining/resources/`. O S5 de treinamento
+fica em `data/raw/training/S5/` e seus produtos em
+`data/processed/training/S5/`; os arquivos Ensembl de validação externa ficam
+em `data/raw/external_validation/ensembl_116/Homo_sapiens/` e seus derivados em
+`data/processed/external_validation/ensembl_116/Homo_sapiens/`.
+
 ## Aplicação web
 
 Nginx expõe apenas `web/public/` e encaminha PHP para PHP-FPM. O fluxo é

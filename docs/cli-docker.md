@@ -1,7 +1,7 @@
 # CLI Docker
 
-A imagem Docker empacota o ambiente Conda, o código e os modelos versionados.
-Não é necessário instalar Python ou Conda no host.
+A imagem Docker empacota somente o ambiente de inferência, o pacote instalado e
+os modelos versionados. Não é necessário instalar Python ou Conda no host.
 
 ## Construir
 
@@ -19,7 +19,7 @@ O `Dockerfile` usa Debian, Miniforge Linux x86-64 e as versões declaradas em
 ```bash
 docker run --rm \
   -v "$PWD:/work" -w /work \
-  rnamining:1.1.0 rnamining \
+  rnamining:1.1.0 rnamining predict \
   -f /work/sequences.fa \
   -organism_name Homo_sapiens \
   -prediction_type coding_prediction \
@@ -27,9 +27,10 @@ docker run --rm \
 ```
 
 O executável `rnamining` está no `PATH`; a imagem não define um entrypoint para
-que scripts gerados pelo Nextflow possam ser executados diretamente. Preparação,
-treinamento e avaliação usam a mesma forma de chamada. Os modelos internos da
-imagem são usados por padrão.
+que scripts gerados pelo Nextflow possam ser executados diretamente. Ela é
+oficialmente destinada a `rnamining predict` e `rnamining --version`; preparação,
+treinamento e avaliação usam o ambiente Conda completo do repositório. Os
+modelos internos da imagem são usados por padrão.
 
 ## Wrapper do projeto
 

@@ -9,15 +9,15 @@ description = "Coding-potential prediction for RNA sequences"
 readme = "README.md"
 requires-python = "==3.14.6"
 dependencies = [
-  "biopython==1.87",
   "numpy==2.5.1",
-  "pandas==3.0.3",
-  "scikit-learn==1.9.0",
   "scipy==1.18.0",
   "xgboost==3.3.0",
 ]
 
 [project.optional-dependencies]
+data = ["pyyaml==6.0.2"]
+evaluation = ["pyyaml==6.0.2", "scikit-learn==1.9.0"]
+development = ["biopython==1.87", "pandas==3.0.3"]
 test = ["pytest==9.0.3"]
 
 [project.scripts]
@@ -28,6 +28,9 @@ package-dir = {"" = "src"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+rnamining = ["resources/*.yaml"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

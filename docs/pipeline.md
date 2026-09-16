@@ -8,7 +8,7 @@ esse modelo para estimar o potencial codificante de novas sequências.
 O dataset completo é um ZIP com pares CDS/ncRNA para as 16 espécies catalogadas:
 
 ```bash
-rnamining prepare-data --input S5_File.zip --output data/
+rnamining prepare-data --input data/raw/training/S5/S5_File.zip --output data/
 ```
 
 Para uma espécie aprovada, o ZIP deve conter na raiz:
@@ -29,11 +29,11 @@ embaralha e divide por classe em treino/teste. O padrão é 80%/20%; `--seed` e
 Saídas principais:
 
 ```text
-data/raw/
-data/processed/train_test_split/coding/*_coding_train.fa
-data/processed/train_test_split/noncoding/*_noncoding_train.fa
-data/evaluation/*_test.fa
-data/reports/*.csv
+data/raw/training/S5/
+data/processed/training/S5/train_test_split/coding/*_coding_train.fa
+data/processed/training/S5/train_test_split/noncoding/*_noncoding_train.fa
+data/processed/training/S5/evaluation/*_test.fa
+data/processed/training/S5/reports/*.csv
 ```
 
 Os FASTAs de avaliação recebem `class:coding` ou `class:noncoding` no header.
@@ -48,14 +48,14 @@ número de bases válidas, produzindo uma matriz de 64 colunas.
 ## Treinamento
 
 ```bash
-rnamining train --data data/processed/train_test_split \
+rnamining train --data data/processed/training/S5/train_test_split \
   --output models/coding_prediction/
 ```
 
 Para uma espécie:
 
 ```bash
-rnamining train-species --data data/processed/train_test_split \
+rnamining train-species --data data/processed/training/S5/train_test_split \
   --species Anolis_carolinensis --output models/coding_prediction/
 ```
 
@@ -72,6 +72,6 @@ rnamining -f sequences.fa \
 rnamining evaluate --output outputs/evaluation/current_models/
 ```
 
-A avaliação usa os FASTAs mantidos em `data/evaluation/` e produz accuracy,
+A avaliação usa os FASTAs mantidos em `data/processed/training/S5/evaluation/` e produz accuracy,
 precision, recall, F1, MCC, AUROC, AUPRC e matriz de confusão. É uma avaliação
 intraespécie, não um teste de generalização entre espécies.
